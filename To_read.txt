@@ -1,0 +1,48 @@
+﻿Script para rsync to Dropbox: http://lesterchan.net/blog/2011/07/15/rsync-to-dropbox-jungle-disk/
+
+
+
+Rsync + crontab to Dropbox: http://aaronparecki.com/articles/2010/07/09/1/how-to-back-up-dropbox-automatically-daily-weekly-monthly-snapshots
+
+https://help.ubuntu.com/community/
+
+CronHowto
+
+(Gnome-Scheduled Tasks tool -> graphical interface for cron: sudo apt-get install gnome-schedule)
+
+
+List of graphing software: http://en.wikipedia.org/wiki/List_of_graphing_software
+	
+	-> http://en.wikipedia.org/wiki/Gnuplot
+	
+	
+	
+Opções módulo gráfico:
+ - Java 2D API (Graphics->Graphics 2D classes)
+   * http://docs.oracle.com/javase/8/docs/api/java/awt/Graphics.html
+   * http://docs.oracle.com/javase/tutorial/2d/
+   * http://zetcode.com/gfx/java2d/
+   * http://www.tutorialspoint.com/awt/awt_rectangle2d_class.htm
+   
+ - Apache Batik Project (The SVG Toolkit)
+  * http://xmlgraphics.apache.org/batik/
+  
+ - Cairo (em C)
+   * http://zetcode.com/gfx/cairo/
+ 
+ - canvg (Javascript SVG parser and renderer on Canvas)
+   * https://code.google.com/p/canvg/
+   
+ - TinyLine
+   * http://www.tinyline.com/2d/index.html
+   
+ # SMIL animation
+	- http://edutechwiki.unige.ch/en/SVG-SMIL_animation_tutorial
+	- http://srufaculty.sru.edu/david.dailey/svg/smil_svg.html
+	- http://svgopen.org/2008/presentations/70-Tricks_of_Javascript_and_declarative_animation/index.html
+	- http://www.w3.org/TR/SVG11/animate.html#AnimateElementsIntro
+	- http://www.w3.org/TR/2001/REC-smil-animation-20010904/
+	
+
+Banco de dados- MER x DER:
+ * http://www.ime.usp.br/~jef/bd02.pdf
