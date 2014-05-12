@@ -1,0 +1,12 @@
+PARÂMETROS CONFIGURÁVEIS:
+
+ - Tamanho de população;
+ - Tamanho de um indivíduo (em bits);
+ - Quantidade de pontos de crossover;
+ - Taxa de mutação (em porcentagem);
+ - Número máximo de corte (usado na seleção -- deve ser < ou = população-1);
+ - Quantidade de indíviduos da geração anterior;
+ - Quantidade de gerações para parada do AG;
+ - Quantidade de indivíduos fit para parada do AG;
+ - Agendamento de geração de chave;
+ - Ativação (Sim/Não) de log de execução do AG;
