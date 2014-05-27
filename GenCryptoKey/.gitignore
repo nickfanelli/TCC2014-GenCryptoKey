@@ -1,1 +1,12 @@
+#ignore all bin directories
 /bin
+bin/
+
+#ignore all target directories
+target/
+
+#ignore all files ending with ~
+*~
+
+#ignore the Eclipse-generated .metadata directory
+.medata
