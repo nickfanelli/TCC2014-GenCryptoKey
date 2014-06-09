@@ -80,7 +80,7 @@ public class Home extends JFrame {
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
-    	    	// Cria e popula o painel para o grid
+    	    	// Formates the panel and creates the grid
     	    	JPanel springPanel = new JPanel(new SpringLayout());
     	    	springPanel.setOpaque(true);
     	    	
@@ -100,9 +100,9 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formata o painel e cria o grid
+    	    	// Formates the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // linhas, colunas
+    	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
     	    	                                6, 6);       // xPad, yPad
     	    	
@@ -184,9 +184,9 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formata o painel e cria o grid
+    	    	// Formates the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // linhas, colunas
+    	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
     	    	                                6, 6);       // xPad, yPad
     	    	
@@ -272,7 +272,7 @@ public class Home extends JFrame {
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
-    	    	// Cria e popula o painel para o grid
+    	    	// Formates the panel and creates the grid
     	    	JPanel springPanel = new JPanel(new SpringLayout());
     	    	springPanel.setOpaque(true);
     	    	
@@ -292,9 +292,9 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formata o painel e cria o grid
+    	    	// Formates the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // linhas, colunas
+    	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
     	    	                                6, 6);       // xPad, yPad
     	    	

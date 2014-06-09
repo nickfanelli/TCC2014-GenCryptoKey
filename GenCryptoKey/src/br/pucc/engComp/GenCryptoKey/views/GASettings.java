@@ -53,14 +53,14 @@ public class GASettings extends JFrame {
 		headerPanel.add(minimumValuesLabel);
 		headerPanel.add(maximumValuesLabel);
     	
-    	// Formata o painel header e cria o grid
+    	// Formats the panel and creates the grid
     	SpringUtilities.makeCompactGrid(headerPanel,
-    	                                1, 5, // linhas, colunas
+    	                                1, 5, // lines, columns
     	                                6, 6,        // initX, initY
     	                                6, 6);       // xPad, yPad
     	*/
     	
-    	// Cria e popula o painel para o grid
+    	// Creates and populates the panel for the grid
     	JPanel springPanel = new JPanel(new SpringLayout());
     	springPanel.setOpaque(true);
     	
@@ -140,9 +140,10 @@ public class GASettings extends JFrame {
     	springPanel.add(writeLogTextField);
     	//springPanel.add(invisLabel4);
     	//springPanel.add(invisLabel5);
-    	// Formata o painel e cria o grid
+    	
+    	// Formates the panel and creates the grid
     	SpringUtilities.makeCompactGrid(springPanel,
-    	                                (numLabels + 2), 3, // linhas, colunas
+    	                                (numLabels + 2), 3, // lines, columns
     	                                6, 6,        // initX, initY
     	                                6, 6);       // xPad, yPad
     	    	

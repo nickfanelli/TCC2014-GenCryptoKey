@@ -8,20 +8,15 @@ public class Population {
 
     List<Individual> individuals;
 
-    // Cria��o de uma popula��o
+    // Create a population
     public Population() {
         individuals = new ArrayList<Individual>();
-        for(int i = 0; i < Parameters.getPopulationSize(); ++i) {
+        for(int i = 0; i < Settings.getPopulationSize(); ++i) {
         	individuals.add(new Individual());
         }
     }
     
-    /* Getters */
-    public Individual getIndividual(int index) {
-        return individuals.get(index);
-    }
-    
-    // Procura o indiv�duo mais fit
+    // Searches for and returns the fittest individual
     public Individual getFittest() {
         Individual fittest = individuals.get(0);
         for (int i = 0; i < getSize(); i++) {
@@ -32,11 +27,7 @@ public class Population {
         return fittest;
     }
     
-    // Retorna tamanho da popula��o
-    public int getSize() {
-        return individuals.size();
-    }
-    
+    // Kills individual at (index) position of the population
     public void kill(int index) {
     	individuals.remove(index);
     }
@@ -49,5 +40,17 @@ public class Population {
     
     public void sort() {
     	Collections.sort(individuals);
+    }
+    
+    /* Getters */
+    
+    // Return a specific individual
+    public Individual getIndividual(int index) {
+        return individuals.get(index);
+    }
+    
+    // Returns the current size of the population
+    public int getSize() {
+        return individuals.size();
     }
 }

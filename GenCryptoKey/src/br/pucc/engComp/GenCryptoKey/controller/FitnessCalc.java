@@ -2,19 +2,18 @@ package br.pucc.engComp.GenCryptoKey.controller;
 
 public class FitnessCalc {
 
-    static byte[] solution = new byte[Parameters.getIndividualLength()];
+    static byte[] solution = new byte[Settings.getIndividualLength()];
 
-    /* M�todos p�blicos */
-    // Array de bytes para a solu��o candidata
+    // Byte array for the candidate solution
     public static void setSolution(byte[] newSolution) {
         solution = newSolution;
     }
 
-    // M�todo STUB para c�lculo de fitness
-    // Para facilitar, transforma a solu��o string de 0s e 1s em um array de bytes
+    // Temporary STUB method for fitness calculation (will be refined later)
+    // For convenience, transforms the string solution for 0s and 1s to a byte array
     static void setSolution(String newSolution) {
         solution = new byte[newSolution.length()];
-        // Loop pelo solu��o, verificando caracter a caracter
+        // Loop through the solution, checking character by character
         for (int i = 0; i < newSolution.length(); i++) {
             String character = newSolution.substring(i, i + 1);
             if (character.contains("0") || character.contains("1")) {
@@ -25,11 +24,13 @@ public class FitnessCalc {
         }
     }
 
-    // Calcula fitness de um indiv�duo comparando-o com a solu��o adotada
+    // Calculates one individual's fitness comparing it to
+    // the adopted (currently hard coded) optimal solution
     static int getFitness(Individual individual) {
         int fitness = 0;
-        // Compara genes do indiv�duo com a solu��o
-        for (int i = 0; i < Parameters.getIndividualLength() && i < solution.length; i++) {
+        // Compares each of the individual's genes with those of the 
+        // adopted optimal solution
+        for (int i = 0; i < Settings.getIndividualLength() && i < solution.length; i++) {
             if (individual.getGene(i) == solution[i]) {
                 fitness++;
             }
@@ -37,9 +38,13 @@ public class FitnessCalc {
         return fitness;
     }
     
-    // Retorna o fitness �timo
-    // "Quantos bits devem ser iguais ao individuo otimo"
+    // Returns the highest (possible) fitness value
+    // It can be read as "How many genes (or bits) must be equal to those of the optimal solution
+    // so that the candidate solution can be considered fit enough to be used as a key"
     static int getMaxFitness() {
+    	// Currently adopting maxFitness as the optimal solution's size,
+    	// meaning a candidate solution must have all of its bits equal to those of the
+    	// optimal solution to be considered fit enough to be used as a key
         return solution.length;
     }
 }

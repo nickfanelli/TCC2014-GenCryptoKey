@@ -1,39 +1,37 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
-//import java.util.ArrayList;
-
 public class AG {
 	
     /* Par�metros do AG */
-    private static final int tournamentSize = 50;
     private static final int elitism = 1;
 
-    /* M�todos p�blicos */
-    
-    // Evolu��o da popula��o
+    // Evolve the population
     public static void evolvePopulation(Population pop) {
-        // Crossover
+        // Selection of current fittest individuals
         tournamentSelection(pop);
         
-        // Cria��o de novos indiv�duos por crossover usando a popula��o atual
+        // Creation of new individuals through crossover using the current population
         crossover(pop);
 
-        // Muta��o
+        // Mutation
         for (int i = 0; i < pop.getSize(); i++) {
             mutate(pop.getIndividual(i));
         }
     }
 
-    // Met�do crossover
+    // Crossover method
     private static void crossover(Population pop) {
-        // Loop por todos os genes dos indiv�duos pais
-        for(int i = 0; i < tournamentSize; i++) {
-        	for(int j = i+1; j < tournamentSize; ++j) {
-        		int crossPoint = (int) (Math.random() * Parameters.getIndividualLength());
+    	// Loop through all individuals' that made it through selection
+    	// applying the crossover to generate new individuals
+    	// Repeated crossovers are disregarded, thus n^2/2 operations are made in O(n)
+        for(int i = 0; i < Settings.getMaxPopulationCutoff(); i++) {
+        	for(int j = i+1; j < Settings.getMaxPopulationCutoff(); ++j) {
+        		int crossPoint = (int) (Math.random() * Settings.getIndividualLength());
         		Individual ind1 = pop.newIndividual();
         		Individual ind2 = pop.newIndividual();
-                
-        		for (int k = 0; k < Parameters.getIndividualLength(); k++) {
+        		
+        		// Loop through all parent individuals' genes
+        		for (int k = 0; k < Settings.getIndividualLength(); k++) {
         			if(k < crossPoint) {
         				ind1.setGene(k, pop.getIndividual(i).getGene(k));
         				ind2.setGene(k, pop.getIndividual(j).getGene(k));
@@ -44,22 +42,21 @@ public class AG {
                 }
         	}
         }
-        for(int i = elitism; i < tournamentSize; ++i) {
+        for(int i = elitism; i < Settings.getMaxPopulationCutoff(); ++i) {
         	pop.kill(elitism);
         }
     }
-    
-    // Mutacao: se ocorrer a mutação, sortear um bit para ser alterado.
 
-    // M�todo muta��o
+    // Mutation method
     private static void mutate(Individual indiv) {
-        if (Math.random() <= Parameters.getMutationRate()) {
-        	int randomGene = (int) Math.floor(Math.random() * Parameters.getIndividualLength());
-            // Novo gene aleat�rio
-        	
-        	// "2" = dominio binario para os possiveis caracteres da chave
-        	// No caso de um dominio alfanumerico, trocar o "2" pelo tamanho
-        	// do dominio (max. 256)
+    	// If mutation chance passes (meaning it will occur)...
+        if (Math.random() <= Settings.getMutationRate()) {
+        	// ...draw a random gene to be modified
+        	int randomGene = (int) Math.floor(Math.random() * Settings.getIndividualLength());
+            // New random gene
+        	// "2" = binary domain range for the possible key characters
+        	// In such case where an alphanumeric domain is desired, change "2"
+        	// for the size of the desired domaindo dominio (max. 92 - according to charSet defined in Settings class)
         	byte newValue = (byte) Math.floor(Math.random() * 2);
         	while(newValue == indiv.getGene(randomGene)) {
         		newValue = (byte) Math.floor(Math.random() * 2);
@@ -68,13 +65,15 @@ public class AG {
         }
     }
 
-    // Sele��o dos invid�duos para crossover (usando-se torneio)
-    // Este torneio n�o usa probabilidade ("1-way" = sele��o aleat�ria)
+    // Selection for crossover
+    // The [maxPopulationCutoff] individuals are selected
     private static void tournamentSelection(Population pop) {
-        // Sele��o de um indiv�duo aleatoriamente para cada posi��o no torneio
+        // Sorts the current population in descending order of fitness
     	pop.sort();
-        while(pop.getSize() > tournamentSize) {
-            pop.kill(tournamentSize);
+    	// Wipes the rest of the population
+        while(pop.getSize() > Settings.getMaxPopulationCutoff()) {
+            pop.kill(Settings.getMaxPopulationCutoff());
         }
+        // After this, only the [maxPopulationCutoff] individuals will be present on the population
     }
 }
