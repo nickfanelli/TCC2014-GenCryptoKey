@@ -1,5 +1,7 @@
 package br.pucc.engComp.GenCryptoKey.views;
 
+import br.pucc.engComp.GenCryptoKey.controller.GenCryptoKey;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -9,11 +11,13 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dialog.ModalityType;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -24,6 +28,8 @@ import javax.swing.JButton;
 import javax.swing.SpringLayout;
 import javax.swing.UIManager;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -31,6 +37,8 @@ import java.util.ArrayList;
 public class Home extends JFrame {
 
 	private JPanel mainContentPane;
+	private JDialog modalDialog;
+	
 	private boolean userLoggedIn = true;
 	static final Home homeFrame = new Home();
 	/**
@@ -60,6 +68,7 @@ public class Home extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
+		// Instantiates the menu bar
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -80,7 +89,7 @@ public class Home extends JFrame {
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
-    	    	// Formates the panel and creates the grid
+    	    	// Formats the panel and creates the grid
     	    	JPanel springPanel = new JPanel(new SpringLayout());
     	    	springPanel.setOpaque(true);
     	    	
@@ -100,7 +109,7 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formates the panel and creates the grid
+    	    	// Formats the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
     	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
@@ -164,7 +173,7 @@ public class Home extends JFrame {
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
-    	    	// Cria e popula o painel para o grid
+    	    	// Creates and populates the panel for the grid
     	    	JPanel springPanel = new JPanel(new SpringLayout());
     	    	springPanel.setOpaque(true);
     	    	
@@ -184,7 +193,7 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formates the panel and creates the grid
+    	    	// Formats the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
     	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
@@ -272,7 +281,7 @@ public class Home extends JFrame {
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
-    	    	// Formates the panel and creates the grid
+    	    	// Formats the panel and creates the grid
     	    	JPanel springPanel = new JPanel(new SpringLayout());
     	    	springPanel.setOpaque(true);
     	    	
@@ -292,7 +301,7 @@ public class Home extends JFrame {
     	    	    }
     	    	}
     	    	
-    	    	// Formates the panel and creates the grid
+    	    	// Formats the panel and creates the grid
     	    	SpringUtilities.makeCompactGrid(springPanel,
     	    	                                numLabels, 2, // lines, columns
     	    	                                6, 6,        // initX, initY
@@ -370,6 +379,32 @@ public class Home extends JFrame {
             }
     	});
 		
+		// Run Menu
+		JMenu runMenu = new JMenu("Run");
+		menuBar.add(runMenu);
+		
+		JMenuItem runGenerateKey = new JMenuItem("Generate new key");
+		runMenu.add(runGenerateKey);
+		runGenerateKey.addActionListener(new ActionListener(){
+			@Override
+    		public void actionPerformed(ActionEvent e) {
+    			GenCryptoKey.run();
+    			JLabel generatedKey = new JLabel("Key generated!");
+    			openMessageDialog(generatedKey, "Export to file");
+            }
+    	});
+		
+		JMenuItem runGenerateKeyGraphically = new JMenuItem("Generate new key (graphical mode)");
+		runMenu.add(runGenerateKeyGraphically);
+		runGenerateKeyGraphically.addActionListener(new ActionListener(){
+			@Override
+    		public void actionPerformed(ActionEvent e) {
+    			GenCryptoKey.runGraphically();
+    			// TODO
+            }
+    	});
+		runGenerateKeyGraphically.setEnabled(false);
+		
 		// View Menu
 		JMenu mnView = new JMenu("View");
 		menuBar.add(mnView);
@@ -404,6 +439,73 @@ public class Home extends JFrame {
 		repaint();		
 	}
 	
+	private void openMessageDialog(JLabel label, String newCustomButton) {
+		if(modalDialog == null){
+			modalDialog = new JDialog(homeFrame, "Output", ModalityType.APPLICATION_MODAL);
+			modalDialog.getContentPane().add(new DialogPanel(label, newCustomButton).getMainPanel());
+			modalDialog.pack();
+			modalDialog.setLocationRelativeTo(homeFrame);
+			modalDialog.setResizable(false);
+			modalDialog.setVisible(true);
+		}else {
+			modalDialog.setVisible(true);
+		}
+	}
+	
+	// Internal class for dialogs that display messages to the user
+	class DialogPanel {
+		private final Dimension dialogSize = new Dimension(350, 75);
+		private JPanel dialogPanel = new JPanel();
+		
+		public DialogPanel() {
+			JButton buttonOk = new JButton("OK");
+			buttonOk.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					modalDialog.dispose();
+				}
+			});
+			dialogPanel.add(buttonOk);
+			dialogPanel.setPreferredSize(dialogSize);
+		}
+		
+		public DialogPanel(JLabel dialogLabel, String newCustomButton) {
+			dialogPanel.add(dialogLabel);
+			JButton buttonOk = new JButton("OK");
+			JButton customButton = null;
+			if(!newCustomButton.isEmpty()){
+				customButton = new JButton(newCustomButton);
+				customButton.addActionListener(new ActionListener(){
+					@Override
+		    		public void actionPerformed(ActionEvent e) {
+		    			PrintWriter exportedKeyFile = null;
+		    			try {
+		    				exportedKeyFile = new PrintWriter("/home/nicholas/testExportkey.txt");
+		    			}catch(FileNotFoundException fnfe) {
+		    				fnfe.printStackTrace();
+		    			}
+		    			exportedKeyFile.println(GenCryptoKey.getGeneratedKey());
+		    			exportedKeyFile.close();
+		            }
+		    	});
+			}
+			buttonOk.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					modalDialog.dispose();
+				}
+			});
+			dialogPanel.add(buttonOk);
+			dialogPanel.add(customButton);
+			dialogPanel.setPreferredSize(dialogSize);
+		}
+		
+		public JPanel getMainPanel() {
+			return dialogPanel;
+		}
+	}
+	
+	// Internal class used to set the logo image on the Home window
 	//@SuppressWarnings(value = { "serial" })
 	class ImagePanel extends JPanel {
 

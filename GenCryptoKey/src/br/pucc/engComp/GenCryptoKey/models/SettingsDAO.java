@@ -75,11 +75,11 @@ public class SettingsDAO {
 						+ "VALUES ('" + 
 						parameter.getIndividualSize() + "', " + 
 						parameter.getPopulationSize() + ", '" +
-						parameter.getCrossoverPoints() + "', '" + 
+						parameter.getNumOfCrossoverPoints() + "', '" + 
 						parameter.getMutationRate() + "', '" + 
-						parameter.getPreservedIndividuals() + "', '" + 
-						parameter.getFitIndividualsToStop() + "', '" + 
-						parameter.getGenerationsToStop() + "', '" + 
+						parameter.getMaxPreservedIndividuals() + "', '" + 
+						parameter.getNumOfFitIndividualsToStop() + "', '" + 
+						parameter.getMaxGenerationsToStop() + "', '" + 
 						parameter.isScheduleKeyGeneration() + "', '" + 
 						parameter.isWriteLog()+ "')";
 			try{
@@ -115,15 +115,15 @@ public class SettingsDAO {
 				              ", POPULATIONSIZE=" + 
 				              "'" + parameter.getPopulationSize() + "'" +
 				              ", CROSSOVERPOINTS=" + 
-				              "'" + parameter.getCrossoverPoints() + "'" +
+				              "'" + parameter.getNumOfCrossoverPoints() + "'" +
 				              ", MUTATIONRATE=" + 
 				              "'" + parameter.getMutationRate() + "'" +
 				              ", PRESERVEDINDIVIDUALS=" + 
-				              "'" + parameter.getPreservedIndividuals() + "'" +
+				              "'" + parameter.getMaxPreservedIndividuals() + "'" +
 				              ", FITINDIVIDUALSTOSTOP=" + 
-				              "'" + parameter.getFitIndividualsToStop() + "'" +
+				              "'" + parameter.getNumOfFitIndividualsToStop() + "'" +
 				              ", GENERATIONSTOSTOP=" + 
-				              "'" + parameter.getGenerationsToStop() + "'" +
+				              "'" + parameter.getMaxGenerationsToStop() + "'" +
 				              ", SCHEDULEKEYGENERATION=" + 
 				              "'" + parameter.isScheduleKeyGeneration() + "'" +
 				              ", WRITELOG=" + 
@@ -176,11 +176,11 @@ public class SettingsDAO {
 	        		parameter.setParameterID(rs.getInt("ID"));
 	        		parameter.setIndividualSize(rs.getInt("INDIVIDUALSIZE"));
 	        		parameter.setPopulationSize(rs.getInt("POPULATIONSIZE"));
-	        		parameter.setCrossoverPoints(rs.getInt("CROSSOVERPOINTS"));
+	        		parameter.setNumOfCrossoverPoints(rs.getInt("CROSSOVERPOINTS"));
 	        		parameter.setMutationRate(rs.getInt("MUTATIONRATE"));
-	        		parameter.setPreservedIndividuals(rs.getInt("PRESERVEDINDIVIDUALS"));
-	        		parameter.setFitIndividualsToStop(rs.getInt("FITINDIVIDUALSTOSTOP"));
-	        		parameter.setGenerationsToStop(rs.getInt("GENERATIONSTOSTOP"));
+	        		parameter.setMaxPreservedIndividuals(rs.getInt("PRESERVEDINDIVIDUALS"));
+	        		parameter.setNumOfFitIndividualsToStop(rs.getInt("FITINDIVIDUALSTOSTOP"));
+	        		parameter.setMaxGenerationsToStop(rs.getInt("GENERATIONSTOSTOP"));
 	        		parameter.setScheduleKeyGeneration(rs.getBoolean("SCHEDULEKEYGENERATION"));
 	        		parameter.setWriteLog(rs.getBoolean("WRITELOG"));
 	        		

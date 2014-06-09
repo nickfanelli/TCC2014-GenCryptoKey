@@ -12,6 +12,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import javax.swing.SpringLayout;
 
+import br.pucc.engComp.GenCryptoKey.controller.SettingsPOJO;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -34,7 +36,9 @@ public class GASettings extends JFrame {
     	
     	int numLabels = settingsLabels.length;
     	
-    	ArrayList<JSlider> settingsSliders = new ArrayList<JSlider>();
+    	// This array will keep track of the value fields that can be
+    	// set by the user for future updating of the database
+    	final ArrayList<JSlider> settingsSliders = new ArrayList<JSlider>();
     	JPanel parentPanel = new JPanel(new BorderLayout());
     	
     	/*
@@ -64,6 +68,7 @@ public class GASettings extends JFrame {
     	JPanel springPanel = new JPanel(new SpringLayout());
     	springPanel.setOpaque(true);
     	
+    	JTextField newMutationRateField = null;
     	for (int i = 0; i < numLabels; i++) {
     		// Creating settings components ...
     		// Parameter label
@@ -71,20 +76,18 @@ public class GASettings extends JFrame {
     	    springPanel.add(parameterName);
     	    // Parameter slider
     	    if(i == 3){
-    	    	JTextField newValueTextField = new JTextField(defaultSettingsValues[i]);
-    	    	newValueTextField.setEnabled(true);
-        	    springPanel.add(newValueTextField);
-        	    //valueFields.add(newValueTextField);
+    	    	newMutationRateField = new JTextField(defaultSettingsValues[i]);
+    	    	newMutationRateField.setEnabled(true);
+        	    springPanel.add(newMutationRateField);
+        	    //settingsSliders.add(newValueTextField);
     	    }else{
     	    	JSlider parameterSlider = new JSlider(Integer.parseInt(minimumParameterValues[i]), 
-						Integer.parseInt(maximumParameterValues[i]), 
-						Integer.parseInt(defaultSettingsValues[i]));
+														Integer.parseInt(maximumParameterValues[i]), 
+														Integer.parseInt(defaultSettingsValues[i]));
 				parameterName.setLabelFor(parameterSlider);
 				springPanel.add(parameterSlider);
 				settingsSliders.add(parameterSlider);
     	    }
-    	    
-    	    
     	    
     	    JButton resetParamButton = new JButton("Reset");
     	    springPanel.add(resetParamButton);
@@ -95,7 +98,7 @@ public class GASettings extends JFrame {
     	    newValueTextField.setText(defaultSettingsValues[i]);
     	    l.setLabelFor(newValueTextField);
     	    springPanel.add(newValueTextField);
-    	    valueFields.add(newValueTextField);
+    	    settingsValues.add(newValueTextField);
     	    // Parameter default value
     	    JTextField defaultValueTextField = new JTextField(defaultSettingsValues[i]);
     	    defaultValueTextField.setEnabled(false);
@@ -109,10 +112,16 @@ public class GASettings extends JFrame {
     	    maximumValueTextField.setEnabled(false);
     	    springPanel.add(maximumValueTextField);
     	    */
-    	}    	
+    	}
+    	
+    	// This JTextField is created out here so it can be accessed later
+    	// on to apply its value to the database
+    	final JTextField finalMutationRateField = newMutationRateField;
+    	
     	
     	JLabel scheduleLabel = new JLabel("Schedule key generation: ");
     	JCheckBox scheduleCheckBox = new JCheckBox();
+    	//settingsSliders.add(scheduleCheckBox);
     	JTextField scheduleTextField = new JTextField("No");
     	//JTextField invisLabel2 = new JTextField("5");
     	//JTextField invisLabel3 = new JTextField("5");
@@ -128,6 +137,7 @@ public class GASettings extends JFrame {
     	
     	JLabel writeLogLabel = new JLabel("Enable execution log: ");
     	JCheckBox writeLogCheckBox = new JCheckBox();
+    	//settingsSliders.add(writeLogCheckBox);
     	JTextField writeLogTextField = new JTextField("No");
     	//JTextField invisLabel4 = new JTextField("5");
     	//JTextField invisLabel5 = new JTextField("5");
@@ -141,7 +151,7 @@ public class GASettings extends JFrame {
     	//springPanel.add(invisLabel4);
     	//springPanel.add(invisLabel5);
     	
-    	// Formates the panel and creates the grid
+    	// Formats the panel and creates the grid
     	SpringUtilities.makeCompactGrid(springPanel,
     	                                (numLabels + 2), 3, // lines, columns
     	                                6, 6,        // initX, initY
@@ -155,7 +165,31 @@ public class GASettings extends JFrame {
 			@Override
     		public void actionPerformed(ActionEvent e) {
     			// TODO Save user values to database
-				// Verify that all fields are numbers and aren't empty
+				// Verify that all fields are positive numbers and aren't empty
+				
+				/*
+				if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
+					// "for-each" structure loops through all of the items
+					// in the settingsFields ArrayList
+					
+					SettingsPOJO newSettings = new SettingsPOJO();
+					for(JSlider settingField : settingsSliders){
+						
+						newSettings.setIndividualSize(settingField.getValue());
+						newSettings.setPopulationSize(settingField.getValue());
+						newSettings.setNumOfCrossoverPoints(settingField.getValue());
+						newSettings.setMutationRate(settingField.getValue());
+						newSettings.setMaxPreservedIndividuals(settingField.getValue());
+						newSettings.setNumOfFitIndividualsToStop(settingField.getValue());
+						newSettings.setMaxGenerationsToStop(settingField.getValue());
+						boolean boolValue
+						newSettings.setScheduleKeyGeneration());
+						newSettings.setWriteLog(settingField.getValue()); 
+						
+				}else {
+					System.out.println("!! ==> Mutation Rate must be a positive integer <== !!");
+				}
+				*/
             }
     	});
     	JButton cancelButton = new JButton("Cancel");

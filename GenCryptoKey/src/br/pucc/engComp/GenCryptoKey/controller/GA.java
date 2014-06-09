@@ -1,6 +1,6 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
-public class AG {
+public class GA {
 	
     /* Par�metros do AG */
     private static final int elitism = 1;

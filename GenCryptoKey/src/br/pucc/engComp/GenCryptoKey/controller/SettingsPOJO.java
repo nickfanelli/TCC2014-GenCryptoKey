@@ -5,11 +5,11 @@ public class SettingsPOJO {
 	private int parameterID;
 	private int individualSize;
 	private int populationSize;
-	private int crossoverPoints;
+	private int numOfCrossoverPoints;
 	private int mutationRate;
-	private int preservedIndividuals;
-	private int fitIndividualsToStop;
-	private int generationsToStop;
+	private int maxPreservedIndividuals;
+	private int numOfFitIndividualsToStop;
+	private int maxGenerationsToStop;
 	private boolean scheduleKeyGeneration;
 	private boolean writeLog;
 	
@@ -19,11 +19,11 @@ public class SettingsPOJO {
 		setParameterID(parameterID);
 		setIndividualSize(individualSize);
 		setPopulationSize(populationSize);
-		setCrossoverPoints(crossoverPoints);
+		setNumOfCrossoverPoints(crossoverPoints);
 		setMutationRate(mutationRate);
-		setPreservedIndividuals(preservedIndividuals);
-		setFitIndividualsToStop(fitIndividualsToStop);
-		setGenerationsToStop(generationsToStop);
+		setMaxPreservedIndividuals(preservedIndividuals);
+		setNumOfFitIndividualsToStop(fitIndividualsToStop);
+		setMaxGenerationsToStop(generationsToStop);
 	}
 	public SettingsPOJO (){}
 	
@@ -32,32 +32,32 @@ public class SettingsPOJO {
 		return parameterID;
 	}
 	
-	public void setParameterID(int parameterID) {
-		this.parameterID = parameterID;
+	public void setParameterID(int newParameterID) {
+		this.parameterID = newParameterID;
 	}
 	
 	public int getIndividualSize() {
 		return individualSize;
 	}
 	
-	public void setIndividualSize(int individualSize) {
-		this.individualSize = individualSize;
+	public void setIndividualSize(int newIndividualSize) {
+		this.individualSize = newIndividualSize;
 	}
 	
 	public int getPopulationSize() {
 		return populationSize;
 	}
 	
-	public void setPopulationSize(int populationSize) {
-		this.populationSize = populationSize;
+	public void setPopulationSize(int newPopulationSize) {
+		this.populationSize = newPopulationSize;
 	}
 	
-	public int getCrossoverPoints() {
-		return crossoverPoints;
+	public int getNumOfCrossoverPoints() {
+		return numOfCrossoverPoints;
 	}
 	
-	public void setCrossoverPoints(int crossoverPoints) {
-		this.crossoverPoints = crossoverPoints;
+	public void setNumOfCrossoverPoints(int newNumOfCrossoverPoints) {
+		this.numOfCrossoverPoints = newNumOfCrossoverPoints;
 	}
 	
 	public int getMutationRate() {
@@ -68,28 +68,28 @@ public class SettingsPOJO {
 		this.mutationRate = mutationRate;
 	}
 	
-	public int getPreservedIndividuals() {
-		return preservedIndividuals;
+	public int getMaxPreservedIndividuals() {
+		return maxPreservedIndividuals;
 	}
 	
-	public void setPreservedIndividuals(int preservedIndividuals) {
-		this.preservedIndividuals = preservedIndividuals;
+	public void setMaxPreservedIndividuals(int newMaxPreservedIndividuals) {
+		this.maxPreservedIndividuals = newMaxPreservedIndividuals;
 	}
 	
-	public int getFitIndividualsToStop() {
-		return fitIndividualsToStop;
+	public int getNumOfFitIndividualsToStop() {
+		return numOfFitIndividualsToStop;
 	}
 	
-	public void setFitIndividualsToStop(int fitIndividualsToStop) {
-		this.fitIndividualsToStop = fitIndividualsToStop;
+	public void setNumOfFitIndividualsToStop(int newNumOfFitIndividualsToStop) {
+		this.numOfFitIndividualsToStop = newNumOfFitIndividualsToStop;
 	}
 	
-	public int getGenerationsToStop() {
-		return generationsToStop;
+	public int getMaxGenerationsToStop() {
+		return maxGenerationsToStop;
 	}
 	
-	public void setGenerationsToStop(int generationsToStop) {
-		this.generationsToStop = generationsToStop;
+	public void setMaxGenerationsToStop(int newMaxGenerationsToStop) {
+		this.maxGenerationsToStop = newMaxGenerationsToStop;
 	}
 	
 	public boolean isScheduleKeyGeneration() {

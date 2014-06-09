@@ -3,13 +3,13 @@ package br.pucc.engComp.GenCryptoKey.controller;
 
 public class Settings {
 	/* Default parameter values */
+	private static int individualSize = 192;
 	private static int populationSize = 500;
-	private static int individualLength = 192;
 	private static int numOfCrossoverPoints = 1;
 	private static double mutationRate = 0.015;
-	private static int maxPopulationCutoff = 50;
-	private static int maxGenerationIterations = 2000;
-	private static int numOfFitIndividualsForStop = 1;
+	private static int maxPreservedIndividuals = 50;
+	private static int numOfFitIndividualsToStop = 1;
+	private static int maxGenerationsToStop = 2000;
 	private static boolean scheduledKeyGeneration = false;
 	private static boolean writeLog = false;
 	
@@ -29,11 +29,11 @@ public class Settings {
 	}
 
 	public static int getIndividualLength() {
-		return individualLength;
+		return individualSize;
 	}
 
 	public static void setIndividualLength(int newIndividualLength) {
-		individualLength = newIndividualLength;
+		individualSize = newIndividualLength;
 	}
 
 	public static int getNumOfCrossoverPoints() {
@@ -53,27 +53,27 @@ public class Settings {
 	}
 
 	public static int getMaxPopulationCutoff() {
-		return maxPopulationCutoff;
+		return maxPreservedIndividuals;
 	}
 
 	public static void setMaxPopulationCutoff(int newMaxPopulationCutoff) {
-		maxPopulationCutoff = newMaxPopulationCutoff;
-	}
-
-	public static int getMaxGenerationIterations() {
-		return maxGenerationIterations;
-	}
-
-	public static void setMaxGenerationIterations(int newMaxGenerationIterations) {
-		maxGenerationIterations = newMaxGenerationIterations;
+		maxPreservedIndividuals = newMaxPopulationCutoff;
 	}
 
 	public static int getNumOfFitIndividualsForStop() {
-		return numOfFitIndividualsForStop;
+		return numOfFitIndividualsToStop;
 	}
 
 	public static void setNumOfFitIndividualsForStop(int newNumOfFitIndividualsForStop) {
-		numOfFitIndividualsForStop = newNumOfFitIndividualsForStop;
+		numOfFitIndividualsToStop = newNumOfFitIndividualsForStop;
+	}
+	
+	public static int getMaxGenerationIterations() {
+		return maxGenerationsToStop;
+	}
+
+	public static void setMaxGenerationIterations(int newMaxGenerationIterations) {
+		maxGenerationsToStop = newMaxGenerationIterations;
 	}
 
 	public static boolean isScheduledKeyGeneration() {

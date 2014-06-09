@@ -1,8 +1,12 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
-public class GenCryptoKey {
+public final class GenCryptoKey {
 
-    public static void main(String[] args) {
+	private static String generatedKey = null;
+	
+	public GenCryptoKey(){}
+	
+    public static void run() {
     	DB.getConnection();
     
         // Solution ("ideal key")
@@ -16,12 +20,22 @@ public class GenCryptoKey {
         while (myPop.getFittest().getFitness() < FitnessCalc.getMaxFitness()) {
             generationCount++;
             System.out.println("Geracao: " + generationCount + " Fittest: " + myPop.getFittest().getFitness());
-            AG.evolvePopulation(myPop);
+            GA.evolvePopulation(myPop);
         }
         System.out.println("Solucao encontrada!");
         System.out.println("Numero de geracoes: " + generationCount);
         System.out.println("Chave:");
         System.out.println(myPop.getFittest());
 
+        generatedKey = myPop.getFittest().toString();
+    }
+    
+    public static void runGraphically() {
+    	// TODO Run graphical execution where user
+    	// can follow the whole key generation process
+    }
+    
+    public static String getGeneratedKey() {
+    	return generatedKey;
     }
 }
