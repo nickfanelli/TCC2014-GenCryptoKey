@@ -1,0 +1,18 @@
+# ignore all bin directorires
+# matches "bin" in any subfolder
+bin/
+
+# ignore the project's database directory 
+# and the database's (Derby) log file
+biocryptokeydb/
+derby.log
+
+# ignore all Eclipse project related files
+.classpath
+.metadata
+.project
+.settings
+
+# ignore all temporary backup files
+*~
+
