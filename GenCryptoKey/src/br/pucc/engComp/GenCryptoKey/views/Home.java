@@ -1,6 +1,8 @@
 package br.pucc.engComp.GenCryptoKey.views;
 
 import br.pucc.engComp.GenCryptoKey.controller.GenCryptoKey;
+import br.pucc.engComp.GenCryptoKey.controller.UserPOJO;
+import br.pucc.engComp.GenCryptoKey.models.UserDAO;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -31,6 +33,8 @@ import javax.swing.UIManager;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 @SuppressWarnings(value = { "serial" })
@@ -39,7 +43,6 @@ public class Home extends JFrame {
 	private JPanel mainContentPane;
 	private JDialog modalDialog;
 	
-	private boolean userLoggedIn = true;
 	static final Home homeFrame = new Home();
 	/**
 	 * Launch the application.
@@ -63,29 +66,48 @@ public class Home extends JFrame {
 	 * Create the Home frame.
 	 */
 	public Home() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key.png")));
+		setDefaultLookAndFeelDecorated(true);
+		//setIconImage(new ImageIcon("/br/pucc/engComp/GenCryptoKey/resources//media/nicholas/UUI/TCC/TCC2014-GenCryptoKey/Icons_24px/clock24px.png").getImage());
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
 		setTitle("CryptoKey");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
-		// Instantiates the menu bar
+		// Menu objects
 		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File"), 
+				editMenu = new JMenu("Edit"),
+				runMenu = new JMenu("Run"),
+				viewMenu = new JMenu("View"),
+				helpMenu = new JMenu("Help");
+		final JMenuItem fileLogin = new JMenuItem("Login..."),
+						fileRegisterUser = new JMenuItem("Register User"),
+						fileExit = new JMenuItem("Exit"),
+						editUserInfo = new JMenuItem("User info"),
+						editSettings = new JMenuItem("Settings"),
+						runGenerateKey = new JMenuItem("Generate new key"),
+						runGenerateKeyGraphically = new JMenuItem("Generate new key (graphical mode)"),
+						viewLastGeneratedKey = new JMenuItem("Last generated key"),
+						viewExecutionLog = new JMenuItem("Execution log"),
+						helpAbout = new JMenuItem("About CryptoKey");
+		
+		// Instantiates the menu bar
+		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		// File Menu
-		JMenu fileMenu = new JMenu("File");
+		// Adding File menu to the menu bar
 		menuBar.add(fileMenu);
 		
-		JMenuItem fileLogin = new JMenuItem("Login...");
 		fileMenu.add(fileLogin);
+		fileLogin.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/login24px.png")));
 		fileLogin.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			final JFrame loginFrame = new JFrame("Login");
     	    	String[] loginLabels = {"Username: ", "Password: "};
     	    	int numLabels = loginLabels.length;
     	    	
-    	    	ArrayList<JTextField> valueFields = new ArrayList<JTextField>();
+    	    	final ArrayList<JTextField> valueFields = new ArrayList<JTextField>();
     	    	
     	    	JPanel parentPanel = new JPanel(new BorderLayout());
     	    	
@@ -122,24 +144,60 @@ public class Home extends JFrame {
     	    	JButton loginButton = new JButton("Log In");
     	    	loginButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evtvt) {
     	    			// TODO Check database for registered user
     	    			// If user info matches, set userLoggedIn
     	    			// to enable session
-    	    			userLoggedIn = true;
+    					if(!valueFields.get(0).getText().isEmpty() && !valueFields.get(1).getText().isEmpty()) {
+    						UserPOJO user = new UserPOJO();
+    						
+    						user.setUsername(valueFields.get(0).getText());
+    						
+    						// Calculate SHA-1 hash of the user's input password
+    						StringBuffer sb = new StringBuffer();
+    						try {
+    							MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+    							byte[] result = mDigest.digest(valueFields.get(1).getText().getBytes());
+    							for (int i = 0; i < result.length; i++) {
+    								sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+    							}
+    						}catch(NoSuchAlgorithmException nsae) {
+    							nsae.printStackTrace();
+    						}
+    						
+    						user.setPassword((valueFields.get(1).getText()));
+    						try {
+								if(UserDAO.getInstance().isRegistered(user)) {
+									System.out.println("User successfully logged in.");
+									loginFrame.dispose();
+								}else {
+									// TODO warn user of incorrect info
+									System.out.println("Usernamed and/or password are incorrect.");
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+    						
+    					}
+    					editUserInfo.setEnabled(true);
+    	    			editSettings.setEnabled(true);
+    					runGenerateKey.setEnabled(true);
+    					//runGenerateKeyGraphically.setEnabled(true);
+    	    			//viewLastGeneratedKey.setEnabled(true);
+    	    			//viewExecutionLog.setEnabled(true);
     	            }
     	    	});
     	    	JButton cancelButton = new JButton("Cancel");
     	    	cancelButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
     	    			loginFrame.dispose();
     	            }
     	    	});
     	    	JButton resetPasswordButton = new JButton("Forgot my password");
     	    	resetPasswordButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
     	    			// TODO Reset user password logic
     	            }
     	    	});
@@ -159,11 +217,11 @@ public class Home extends JFrame {
             }
     	});
 		
-		JMenuItem fileRegisterUser= new JMenuItem("Register user");
 		fileMenu.add(fileRegisterUser);
+		fileRegisterUser.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/addUser24px.png")));
 		fileRegisterUser.addActionListener(new ActionListener(){
 			@Override			
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			final JFrame registerUserFrame = new JFrame("Register user");
     			String[] loginLabels = {"First name: ", "Last name: ", "E-Mail: ", "Confirm E-Mail: ",
     									"Username: ", "Password: ", "Confirm password: "};
@@ -206,7 +264,7 @@ public class Home extends JFrame {
     	    	JButton registerButton = new JButton("Register");
     	    	registerButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
     	    			// TODO Register user
     	    			// Verify no field is empty before proceeding
     	    			if(valueFields.get(0).getText().isEmpty()
@@ -215,7 +273,7 @@ public class Home extends JFrame {
     	    					|| valueFields.get(3).getText().isEmpty()
     	    					|| valueFields.get(4).getText().isEmpty()
     	    					|| valueFields.get(5).getText().isEmpty()
-    	    					|| valueFields.get(6).getText().isEmpty()){
+    	    					|| valueFields.get(6).getText().isEmpty()) {
     	    				// One or more fields are empty
     	    				// warn user
     	    				
@@ -228,13 +286,27 @@ public class Home extends JFrame {
         	    			}else{
         	    				// If more than 1 user is allowed
         	    				//Check if Username and or E-Mail isn't already in use
+        	    				UserPOJO newUser = new UserPOJO();
+        	    				newUser.setFirstName(valueFields.get(0).getText());
+        	    				newUser.setLastName(valueFields.get(1).getText());        	    				
+        	    				newUser.setEmail(valueFields.get(2).getText());
+        	    				newUser.setUsername(valueFields.get(4).getText());
+        	    				newUser.setPassword(valueFields.get(5).getText());
+        	    				
+        	    				try {
+									if(UserDAO.getInstance().newUser(newUser) != -1) {
+										System.out.println("User successfully registered.");
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
         	    			}
     	    			}
     	    	});
     	    	JButton cancelButton = new JButton("Cancel");
     	    	cancelButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
     	    			registerUserFrame.dispose();
     	            }
     	    	});
@@ -253,8 +325,9 @@ public class Home extends JFrame {
             }
     	});
 		
-		JMenuItem fileExit = new JMenuItem("Exit");
+		fileMenu.addSeparator();
 		fileMenu.add(fileExit);
+		fileExit.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/eject24px.png")));
 		fileExit.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -263,15 +336,15 @@ public class Home extends JFrame {
 			}
 			
 		});
-		// Edit Menu
-		JMenu editMenu = new JMenu("Edit");
+		// Adding Edit menu to the menu bar
 		menuBar.add(editMenu);
 		
-		JMenuItem mntmUserInfo = new JMenuItem("User Info");
-		editMenu.add(mntmUserInfo);
-		mntmUserInfo.addActionListener(new ActionListener(){
+		editMenu.add(editUserInfo);
+		editUserInfo.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/editPencil24px.png")));
+		editUserInfo.setEnabled(false);
+		editUserInfo.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			final JFrame editUserFrame = new JFrame("Edit user info");
     			String[] loginLabels = {"First name: ", "Last name: ", "E-Mail: ", "Confirm E-Mail: ",
     									"Username: ", "Password: ", "Confirm password: "};
@@ -310,12 +383,12 @@ public class Home extends JFrame {
     	    	// TODO Recover user info from database and set fields
     	    	
     	    	JPanel buttonsPanel = new JPanel();
-    	    	buttonsPanel.setLayout(new GridLayout(1, 2, 10, 0));
+    	    	buttonsPanel.setLayout(new GridLayout(1, 3, 10, 0));
     	    	
     	    	JButton registerButton = new JButton("Save changes");
     	    	registerButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
     	    			// TODO Update user info
     	    			// Verify no field is empty before proceeding
     	    			if(valueFields.get(0).getText().isEmpty()
@@ -343,13 +416,22 @@ public class Home extends JFrame {
     	    	JButton cancelButton = new JButton("Cancel");
     	    	cancelButton.addActionListener(new ActionListener(){
     				@Override
-    	    		public void actionPerformed(ActionEvent e) {
+    	    		public void actionPerformed(ActionEvent evt) {
+    					editUserFrame.dispose();
+    	            }
+    	    	});
+    	    	
+    	    	JButton deleteUserButton = new JButton("Delete user");
+    	    	deleteUserButton.addActionListener(new ActionListener(){
+    				@Override
+    	    		public void actionPerformed(ActionEvent evt) {
     					editUserFrame.dispose();
     	            }
     	    	});
     	    	
     	    	buttonsPanel.add(registerButton);
     	    	buttonsPanel.add(cancelButton);
+    	    	buttonsPanel.add(deleteUserButton);
     	    	
     	    	parentPanel.add(springPanel, BorderLayout.NORTH);
     	    	parentPanel.add(buttonsPanel, BorderLayout.SOUTH);
@@ -362,75 +444,63 @@ public class Home extends JFrame {
             }
     	});
 		
-		JMenuItem editSettings = new JMenuItem("Settings");
-		if(userLoggedIn){
-			editSettings.setEnabled(true);
-		}else{
-			editSettings.setEnabled(false);
-		}
-		
-		editSettings.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/settingsWrench.png")));
+		editSettings.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/tools24px.png")));
+		editSettings.setEnabled(false);
 		editMenu.add(editSettings);
 		editSettings.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			GASettings frame = new GASettings();
 				frame.setVisible(true);
             }
     	});
 		
-		// Run Menu
-		JMenu runMenu = new JMenu("Run");
+		// Adding 'Run' menu to the menu bar
 		menuBar.add(runMenu);
 		
-		JMenuItem runGenerateKey = new JMenuItem("Generate new key");
 		runMenu.add(runGenerateKey);
+		runGenerateKey.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px.png")));
+		runGenerateKey.setEnabled(false);
 		runGenerateKey.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			GenCryptoKey.run();
     			JLabel generatedKey = new JLabel("Key generated!");
     			openMessageDialog(generatedKey, "Export to file");
             }
     	});
 		
-		JMenuItem runGenerateKeyGraphically = new JMenuItem("Generate new key (graphical mode)");
 		runMenu.add(runGenerateKeyGraphically);
+		runGenerateKeyGraphically.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/eye24px.png")));
+		runGenerateKeyGraphically.setEnabled(false);
 		runGenerateKeyGraphically.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			GenCryptoKey.runGraphically();
     			// TODO
             }
     	});
 		runGenerateKeyGraphically.setEnabled(false);
 		
-		// View Menu
-		JMenu mnView = new JMenu("View");
-		menuBar.add(mnView);
+		// Adding 'View' menu to the menu bar
+		menuBar.add(viewMenu);
 		
-		JMenuItem mntmGraphicExecution = new JMenuItem("Graphic execution");
-		mntmGraphicExecution.setEnabled(false);
-		mnView.add(mntmGraphicExecution);
+		viewLastGeneratedKey.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notesKey24px.png")));
+		viewLastGeneratedKey.setEnabled(false);
+		viewMenu.add(viewLastGeneratedKey);
 		
-		JMenuItem mntmLastGeneratedKey = new JMenuItem("Last generated key");
-		mntmLastGeneratedKey.setEnabled(false);
-		mnView.add(mntmLastGeneratedKey);
+		viewExecutionLog.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notes24px.png")));
+		viewExecutionLog.setEnabled(false);
+		viewMenu.add(viewExecutionLog);
 		
-		JMenuItem mntmExecutionLog = new JMenuItem("Execution log");
-		mntmExecutionLog.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/document.png")));
-		mntmExecutionLog.setEnabled(false);
-		mnView.add(mntmExecutionLog);
-		
-		// Help Menu
-		JMenu helpMenu = new JMenu("Help");
+		// Adding 'Help' menu to the menu bar
 		menuBar.add(helpMenu);
 		
-		JMenuItem helpAbout = new JMenuItem("About CryptoKey");
-		helpAbout.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/info.png")));
+		helpAbout.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/help24px.png")));
 		helpMenu.add(helpAbout);
 		
-		mainContentPane = new ImagePanel(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/Key_DNA_logo-500px.png"));
+		
+		mainContentPane = new ImagePanel(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key_DNA_logo-500px.png"));
 		mainContentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(mainContentPane);
 			
@@ -477,7 +547,7 @@ public class Home extends JFrame {
 				customButton = new JButton(newCustomButton);
 				customButton.addActionListener(new ActionListener(){
 					@Override
-		    		public void actionPerformed(ActionEvent e) {
+		    		public void actionPerformed(ActionEvent evt) {
 		    			PrintWriter exportedKeyFile = null;
 		    			try {
 		    				exportedKeyFile = new PrintWriter("/home/nicholas/testExportkey.txt");

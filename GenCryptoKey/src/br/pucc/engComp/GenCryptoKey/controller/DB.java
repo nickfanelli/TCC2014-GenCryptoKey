@@ -37,12 +37,14 @@ public class DB {
 
 	// Executes INSERT, UPDATE and DELETE commands
 	public int execCommand(String sqlCmd) throws Exception {
-		return psUpdate.executeUpdate(sqlCmd);
+		psUpdate = conn.prepareStatement(sqlCmd);
+		return psUpdate.executeUpdate();
 	}
 	
 	// Executes SELECT commands (queries)
 	public ResultSet execQuery(String sqlQuery) throws Exception {
-		return this.psSelect.executeQuery(sqlQuery);
+		psSelect = conn.prepareStatement(sqlQuery);
+		return this.psSelect.executeQuery();
 	}
 	
 	// Releases all open resources to avoid unnecessary memory usage
@@ -132,7 +134,7 @@ public class DB {
 	}
 
 	// Static block is executed as soon as the class is instantiated
-	// Here is creates the database and its tables, in case it hasn't
+	// Here it creates the database and its tables, in case it hasn't
 	// already been created before - possibly in an earlier execution.
 	static {
 		getConnection();
@@ -144,7 +146,7 @@ public class DB {
 		
 		Pair<String, String> settingsTable = new Pair<String, String>();
 		settingsTable.setFirst("GASETTINGS");
-		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONRATE int, PRESERVEDINDIVIDUALS int, GENERATIONSTOSTOP int, SCHEDULEKEYGENERATION boolean, WRITELOG boolean, primary key(ID))");
+		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONRATE int, PRESERVEDINDIVIDUALS int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEKEYGENERATION boolean, WRITELOG boolean, primary key(ID))");
 		
 		Pair<String, String> generatedKeysTable = new Pair<String, String>();
 		generatedKeysTable.setFirst("GENERATEDKEYS");

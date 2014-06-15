@@ -37,16 +37,11 @@ public class UserDAO {
 	    }
 		
 		// Check whether user is registered on the database
-		public boolean isRegistered(int userId) throws Exception
-	    {
+		public boolean isRegistered(UserPOJO user) throws Exception {
 	        String query;
 
-	        query = "SELECT * FROM USERINFO WHERE ID =" +
-	              userId;
-
-			/*query = "SELECT COUNT(*) AS howMany " +
-	              "FROM USERINFO WHERE CODIGO=" +
-	              userId;*/
+	        query = "SELECT * FROM USERINFO WHERE USERNAME =" +
+	              user.getUsername() + "AND PASSWORD =" + user.getPassword();
 
 	        ResultSet rs = db.execQuery (query);
 
@@ -55,16 +50,16 @@ public class UserDAO {
 	        return res;
 	    }
 		
-		public void valideAttributes(UserPOJO user) throws Exception{
+		public void valideAttributes(UserPOJO user) throws Exception {
 			if (user == null)
 	            throw new Exception ("User not given.");
 
-	        if (!isRegistered(user.getUserID()))
+	        if (!isRegistered(user))
 	            throw new Exception ("User not registered.");
 		}
 		
 		// Insert new user
-		public int newUser(UserPOJO user) throws Exception{
+		public int newUser(UserPOJO user) throws Exception {
 			if (user == null)
 	            throw new Exception ("User not given.");
 			
@@ -80,20 +75,20 @@ public class UserDAO {
 				return db.execCommand(sqlCmd);
 			}catch(Exception e){
 				e.printStackTrace();
-				throw new Exception ("Filme ja cadastrado.");
+				throw new Exception ("User already registered.");
 			}
 			
 		}
 		
 		// Remove user from database
-		public void deleteUser(int userID) throws Exception{
-	        if (!isRegistered(userID))
+		public void deleteUser(UserPOJO user) throws Exception {
+	        if (!isRegistered(user))
 	            throw new Exception ("User not registered.");
 
 	        String sqlCmd;
 
 	        sqlCmd = "DELETE FROM USERINFO WHERE ID =" +
-	              userID;
+	              user.getUserID();
 
 	        db.execCommand (sqlCmd);
 	    }

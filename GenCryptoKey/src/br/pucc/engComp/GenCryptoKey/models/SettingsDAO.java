@@ -64,9 +64,7 @@ public class SettingsDAO {
 		}
 		
 		// Insert new parameter
-		public int newparameter(SettingsPOJO parameter) throws Exception{
-			if (parameter == null)
-	            throw new Exception ("Parameter not given.");
+		public int newSettings(SettingsPOJO parameter) throws Exception{
 			
 			String sqlCmd;
 			
@@ -86,13 +84,13 @@ public class SettingsDAO {
 				return db.execCommand(sqlCmd);
 			}catch(Exception e){
 				e.printStackTrace();
-				throw new Exception ("Filme ja cadastrado.");
+				throw new Exception ("Error trying to insert Settings.");
 			}
 			
 		}
 		
 		// Remove parameter from database
-		public void deleteparameter(int parameterID) throws Exception{
+		public void deleteParameter(int parameterID) throws Exception{
 	        if (!isRegistered(parameterID))
 	            throw new Exception ("Parameter not registered.");
 
@@ -105,7 +103,7 @@ public class SettingsDAO {
 	    }
 
 		// Update parameter's personal information
-	    public int updateparameter(SettingsPOJO parameter) throws Exception {
+	    public int updateParameter(SettingsPOJO parameter) throws Exception {
 	    		valideAttributes(parameter);;
 	    		String cmdSQL;
 
@@ -133,7 +131,7 @@ public class SettingsDAO {
 		        return db.execCommand(cmdSQL);
 	    }
 
-	    public SettingsPOJO getparameter(int parameterID) throws Exception{
+	    public SettingsPOJO getParameter(int parameterID) throws Exception{
 	        String query;
 
 	        query = "SELECT * FROM GASETTINGS WHERE ID=" + parameterID;
@@ -159,7 +157,7 @@ public class SettingsDAO {
 	        return parameter;
 	    }
 
-	    public ArrayList<SettingsPOJO> getparameters() throws Exception{
+	    public ArrayList<SettingsPOJO> getParameters() throws Exception{
 	        String query;
 	        ArrayList<SettingsPOJO> parameters = null;
 	        query = "SELECT * FROM GASETTINGS";

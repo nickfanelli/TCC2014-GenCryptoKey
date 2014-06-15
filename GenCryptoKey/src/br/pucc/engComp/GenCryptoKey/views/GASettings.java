@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.SpringLayout;
 
 import br.pucc.engComp.GenCryptoKey.controller.SettingsPOJO;
+import br.pucc.engComp.GenCryptoKey.models.SettingsDAO;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,7 @@ public class GASettings extends JFrame {
     	
     	String[] settingsLabels = {"Individual size: ", "Population size: ", "Crossover points: ", "Mutation rate: ",
     								"Preserved individuals: ", "Fit individuals to stop: ", "Generations to stop: "};
-    	String[] defaultSettingsValues = {"192", "500", "1", "0.015", "50", "1", "2000"};
+    	final String[] defaultSettingsValues = {"192", "500", "1", "0.015", "50", "1", "2000"};
     	String[] minimumParameterValues = {"128", "50", "1", "0.005", "10", "0", "500"};
     	String[] maximumParameterValues = {"512", "5000", "10", "0.03", "500", "5", "10000"};    	
     	
@@ -39,6 +40,8 @@ public class GASettings extends JFrame {
     	// This array will keep track of the value fields that can be
     	// set by the user for future updating of the database
     	final ArrayList<JSlider> settingsSliders = new ArrayList<JSlider>();
+    	final ArrayList<JCheckBox> settingsCheckboxes = new ArrayList<JCheckBox>();
+    	final ArrayList<JButton> settingsResetButtons = new ArrayList<JButton>();
     	JPanel parentPanel = new JPanel(new BorderLayout());
     	
     	/*
@@ -91,6 +94,7 @@ public class GASettings extends JFrame {
     	    
     	    JButton resetParamButton = new JButton("Reset");
     	    springPanel.add(resetParamButton);
+    	    settingsResetButtons.add(resetParamButton);
     	    
     	    /*
     	    // Parameter (current) value
@@ -118,9 +122,36 @@ public class GASettings extends JFrame {
     	// on to apply its value to the database
     	final JTextField finalMutationRateField = newMutationRateField;
     	
+    	// Adding ActionListener to each individual setting Reset button
+    	for(int i = 0; i < settingsResetButtons.size(); i++) {
+    		final int aux = i;
+    		if(i == 3) { // Skip the mutation rate index on the defaultSettingsValues list
+    			settingsResetButtons.get(i).addActionListener(new ActionListener() {
+    				@Override
+    				public void actionPerformed(ActionEvent evt) {
+    					finalMutationRateField.setText(defaultSettingsValues[aux]);
+    				}
+    			});
+			}else if(i > 3) {
+				settingsResetButtons.get(i).addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent evt) {
+						settingsSliders.get(aux-1).setValue(Integer.parseInt(defaultSettingsValues[aux]));
+					}
+				});
+			}else {
+				settingsResetButtons.get(i).addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent evt) {
+						settingsSliders.get(aux).setValue(Integer.parseInt(defaultSettingsValues[aux]));
+					}
+				});
+			}
+    	}
     	
     	JLabel scheduleLabel = new JLabel("Schedule key generation: ");
     	JCheckBox scheduleCheckBox = new JCheckBox();
+    	settingsCheckboxes.add(scheduleCheckBox);
     	//settingsSliders.add(scheduleCheckBox);
     	JTextField scheduleTextField = new JTextField("No");
     	//JTextField invisLabel2 = new JTextField("5");
@@ -137,6 +168,7 @@ public class GASettings extends JFrame {
     	
     	JLabel writeLogLabel = new JLabel("Enable execution log: ");
     	JCheckBox writeLogCheckBox = new JCheckBox();
+    	settingsCheckboxes.add(writeLogCheckBox);
     	//settingsSliders.add(writeLogCheckBox);
     	JTextField writeLogTextField = new JTextField("No");
     	//JTextField invisLabel4 = new JTextField("5");
@@ -161,57 +193,84 @@ public class GASettings extends JFrame {
     	buttonsPanel.setLayout(new GridLayout(1, 3, 10, 0));
     	
     	JButton applyButton = new JButton("Apply");
-    	applyButton.addActionListener(new ActionListener(){
+    	applyButton.addActionListener(new ActionListener() {
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			// TODO Save user values to database
 				// Verify that all fields are positive numbers and aren't empty
-				
-				/*
-				if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
-					// "for-each" structure loops through all of the items
-					// in the settingsFields ArrayList
-					
-					SettingsPOJO newSettings = new SettingsPOJO();
-					for(JSlider settingField : settingsSliders){
+				try {
+					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
 						
-						newSettings.setIndividualSize(settingField.getValue());
-						newSettings.setPopulationSize(settingField.getValue());
-						newSettings.setNumOfCrossoverPoints(settingField.getValue());
-						newSettings.setMutationRate(settingField.getValue());
-						newSettings.setMaxPreservedIndividuals(settingField.getValue());
-						newSettings.setNumOfFitIndividualsToStop(settingField.getValue());
-						newSettings.setMaxGenerationsToStop(settingField.getValue());
-						boolean boolValue
-						newSettings.setScheduleKeyGeneration());
-						newSettings.setWriteLog(settingField.getValue()); 
+						System.out.println("settingsSliders.size(): " + settingsSliders.size());
+						for (int u = 0; u < settingsSliders.size(); u++) {
+							System.out.println("settingsSliders.get(" + u + ").getValue(): " + settingsSliders.get(u).getValue());
+						}
+						System.out.println("checkbox[0]: " + settingsCheckboxes.get(0).isSelected());
+						System.out.println("checkbox[1]: " + settingsCheckboxes.get(1).isSelected());
+						SettingsPOJO newSettings = new SettingsPOJO();
 						
-				}else {
-					System.out.println("!! ==> Mutation Rate must be a positive integer <== !!");
+						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
+						newSettings.setPopulationSize(settingsSliders.get(1).getValue());
+						newSettings.setNumOfCrossoverPoints(settingsSliders.get(2).getValue());
+						newSettings.setMutationRate(Double.parseDouble(finalMutationRateField.getText().toString()));
+						newSettings.setMaxPreservedIndividuals(settingsSliders.get(3).getValue());
+						newSettings.setNumOfFitIndividualsToStop(settingsSliders.get(4).getValue());
+						newSettings.setMaxGenerationsToStop(settingsSliders.get(5).getValue());
+						boolean boolValue = settingsCheckboxes.get(0).isSelected();
+						newSettings.setScheduleKeyGeneration(boolValue);
+						/*
+						if(boolValue) {
+							// TODO Save the user set scheduled minutes for generation.
+						}
+						*/
+						boolValue = settingsCheckboxes.get(1).isSelected();
+						newSettings.setWriteLog(boolValue);
+						
+						// Save to database
+						if(SettingsDAO.getInstance().newSettings(newSettings) != -1) {
+							System.out.println("New settings successfully saved to the database.");
+							settingsFrame.dispose();
+						}
+					}else {
+						System.out.println("!! ==> Mutation Rate must be a positive integer <== !!");
+					}
+				}catch (Exception e) {
+					e.printStackTrace();
 				}
-				*/
             }
     	});
     	JButton cancelButton = new JButton("Cancel");
     	cancelButton.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
+    		public void actionPerformed(ActionEvent evt) {
     			settingsFrame.dispose();
             }
     	});
     	
-    	JButton resetButton = new JButton("Reset");
-    	resetButton.addActionListener(new ActionListener(){
+    	JButton resetAllButton = new JButton("Reset all");
+    	resetAllButton.addActionListener(new ActionListener(){
 			@Override
-    		public void actionPerformed(ActionEvent e) {
-    			// TODO Recover default values from database and
-    			// set on the text fields
+    		public void actionPerformed(ActionEvent evt) {
+    			// Recover default values and set on the text fields
+				System.out.println("settingsSliders.size(): " + settingsSliders.size());
+				for(int i = 0; i < settingsSliders.size(); i++) {
+					if(i == 3) { // Skip the mutation rate index on the defaultSettingsValues list
+						settingsSliders.get(i).setValue(Integer.parseInt(defaultSettingsValues[i+1]));
+					}else if(i > 3) {
+						settingsSliders.get(i).setValue(Integer.parseInt(defaultSettingsValues[i+1]));
+					}else {
+						settingsSliders.get(i).setValue(Integer.parseInt(defaultSettingsValues[i]));
+					}
+				}
+				finalMutationRateField.setText(defaultSettingsValues[3]);
+				settingsCheckboxes.get(0).setSelected(false);
+				settingsCheckboxes.get(1).setSelected(false);
             }
     	});
     	
     	buttonsPanel.add(applyButton);
     	buttonsPanel.add(cancelButton);
-    	buttonsPanel.add(resetButton);
+    	buttonsPanel.add(resetAllButton);
     	
     	//parentPanel.add(headerPanel, BorderLayout.NORTH);
     	parentPanel.add(springPanel, BorderLayout.CENTER);
@@ -222,5 +281,5 @@ public class GASettings extends JFrame {
     	settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	settingsFrame.setLocationRelativeTo(null);
     	settingsFrame.setVisible(true);
-		}
+	}
 }

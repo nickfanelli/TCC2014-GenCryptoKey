@@ -6,7 +6,7 @@ public class SettingsPOJO {
 	private int individualSize;
 	private int populationSize;
 	private int numOfCrossoverPoints;
-	private int mutationRate;
+	private double mutationRate;
 	private int maxPreservedIndividuals;
 	private int numOfFitIndividualsToStop;
 	private int maxGenerationsToStop;
@@ -60,11 +60,11 @@ public class SettingsPOJO {
 		this.numOfCrossoverPoints = newNumOfCrossoverPoints;
 	}
 	
-	public int getMutationRate() {
+	public double getMutationRate() {
 		return mutationRate;
 	}
 	
-	public void setMutationRate(int mutationRate) {
+	public void setMutationRate(double mutationRate) {
 		this.mutationRate = mutationRate;
 	}
 	
