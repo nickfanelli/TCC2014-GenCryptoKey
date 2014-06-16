@@ -2,7 +2,7 @@ package br.pucc.engComp.GenCryptoKey.controller;
 
 public class FitnessCalc {
 
-    static byte[] solution = new byte[Settings.getIndividualLength()];
+    static byte[] solution = new byte[Settings.getIndividualSize()];
 
     // Byte array for the candidate solution
     public static void setSolution(byte[] newSolution) {
@@ -10,17 +10,17 @@ public class FitnessCalc {
     }
 
     // Temporary STUB method for fitness calculation (will be refined later)
-    // For convenience, transforms the string solution for 0s and 1s to a byte array
+    // For convenience, transforms the string solution from 0s and 1s to a byte array
     static void setSolution(String newSolution) {
         solution = new byte[newSolution.length()];
         // Loop through the solution, checking character by character
         for (int i = 0; i < newSolution.length(); i++) {
             String character = newSolution.substring(i, i + 1);
-            if (character.contains("0") || character.contains("1")) {
-                solution[i] = Byte.parseByte(character);
-            } else {
-                solution[i] = 0;
-            }
+            //if (character.contains("0") || character.contains("1")) {
+                solution[i] = (byte) character.charAt(0);
+            //} else {
+               // solution[i] = 0;
+            //}
         }
     }
 
@@ -30,7 +30,7 @@ public class FitnessCalc {
         int fitness = 0;
         // Compares each of the individual's genes with those of the 
         // adopted optimal solution
-        for (int i = 0; i < Settings.getIndividualLength() && i < solution.length; i++) {
+        for (int i = 0; i < Settings.getIndividualSize() && i < solution.length; i++) {
             if (individual.getGene(i) == solution[i]) {
                 fitness++;
             }

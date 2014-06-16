@@ -10,12 +10,14 @@ public class SettingsPOJO {
 	private int maxPreservedIndividuals;
 	private int numOfFitIndividualsToStop;
 	private int maxGenerationsToStop;
-	private boolean scheduleKeyGeneration;
+	private boolean scheduledKeyGeneration;
+	private int scheduledKeyGenerationTime;
 	private boolean writeLog;
 	
 	public SettingsPOJO (int parameterID, int individualSize, int populationSize, int crossoverPoints,
 							int mutationRate, int preservedIndividuals, int fitIndividualsToStop, 
-							int generationsToStop, boolean scheduleKeyGeneration, boolean writeLog){
+							int generationsToStop, boolean scheduledKeyGeneration, int scheduledKeyGenerationTime,
+							boolean writeLog){
 		setParameterID(parameterID);
 		setIndividualSize(individualSize);
 		setPopulationSize(populationSize);
@@ -24,6 +26,9 @@ public class SettingsPOJO {
 		setMaxPreservedIndividuals(preservedIndividuals);
 		setNumOfFitIndividualsToStop(fitIndividualsToStop);
 		setMaxGenerationsToStop(generationsToStop);
+		setScheduledKeyGeneration(scheduledKeyGeneration);
+		setScheduledKeyGenerationTime(scheduledKeyGenerationTime);
+		setWriteLog(writeLog);
 	}
 	public SettingsPOJO (){}
 	
@@ -92,12 +97,20 @@ public class SettingsPOJO {
 		this.maxGenerationsToStop = newMaxGenerationsToStop;
 	}
 	
-	public boolean isScheduleKeyGeneration() {
-		return scheduleKeyGeneration;
+	public boolean isScheduledKeyGeneration() {
+		return scheduledKeyGeneration;
 	}
 	
-	public void setScheduleKeyGeneration(boolean scheduleKeyGeneration) {
-		this.scheduleKeyGeneration = scheduleKeyGeneration;
+	public void setScheduledKeyGeneration(boolean scheduledKeyGeneration) {
+		this.scheduledKeyGeneration = scheduledKeyGeneration;
+	}
+	
+	public int getScheduledKeyGenerationTime() {
+		return scheduledKeyGenerationTime;
+	}
+	
+	public void setScheduledKeyGenerationTime(int scheduledKeyGenerationTime) {
+		this.scheduledKeyGenerationTime = scheduledKeyGenerationTime;
 	}
 	
 	public boolean isWriteLog() {

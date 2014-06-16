@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JButton;
 import javax.swing.SpringLayout;
 
+import br.pucc.engComp.GenCryptoKey.controller.Settings;
 import br.pucc.engComp.GenCryptoKey.controller.SettingsPOJO;
 import br.pucc.engComp.GenCryptoKey.models.SettingsDAO;
 
@@ -29,7 +30,8 @@ public class GASettings extends JFrame {
 	public GASettings(JFrame homeFrame) {
 		
 		final JDialog settingsFrame = new JDialog(homeFrame, "Genetic Algorithm Settings", true);
-    	
+    	final SettingsPOJO newSettings = new SettingsPOJO();
+		
     	String[] settingsLabels = {"Individual size: ", "Population size: ", "Crossover points: ", "Mutation rate: ",
     								"Preserved individuals: ", "Fit individuals to stop: ", "Generations to stop: "};
     	final String[] defaultSettingsValues = {"192", "500", "1", "0.015", "50", "1", "2000"};
@@ -111,6 +113,7 @@ public class GASettings extends JFrame {
     	settingsCheckboxes.add(scheduleCheckBox);
     	JTextField scheduleTextField = new JTextField("No");
     	scheduleTextField.setEnabled(false);
+    	final JTextField minutesField = new JTextField();
     	scheduleCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -121,10 +124,9 @@ public class GASettings extends JFrame {
 					JPanel scheduleKeyTextPanel = new JPanel();
 					scheduleKeyPanel.setLayout(new GridLayout(2, 2, 10, 0));
 					scheduleKeyTextPanel.setLayout(new GridLayout(1, 2, 10, 0));
-					
 					JLabel scheduleKeyLabel = new JLabel("Generate keys every: ");
 					JLabel minutesLabel = new JLabel("minutes.");
-					JTextField minutesField = new JTextField();
+					
 					minutesField.setSize(20, 10);
 					
 					JButton applyScheduleKeyButton = new JButton("Apply");
@@ -132,14 +134,15 @@ public class GASettings extends JFrame {
 					
 					applyScheduleKeyButton.addActionListener(new ActionListener() {
 						@Override
-						public void actionPerformed(ActionEvent arg0) {
-							// TODO
+						public void actionPerformed(ActionEvent evt) {
+							newSettings.setScheduledKeyGenerationTime(Integer.parseInt(minutesField.getText()));
+							scheduleKeyFrame.dispose();
 						}
 					});
 					
 					cancelScheduleKeyButton.addActionListener(new ActionListener() {
 						@Override
-						public void actionPerformed(ActionEvent arg0) {
+						public void actionPerformed(ActionEvent evt) {
 							scheduleKeyFrame.dispose();
 						}
 					});
@@ -158,6 +161,8 @@ public class GASettings extends JFrame {
 			    	scheduleKeyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			    	scheduleKeyFrame.setLocationRelativeTo(null);
 					scheduleKeyFrame.setVisible(true);
+				}else {
+					newSettings.setScheduledKeyGenerationTime(0);
 				}
 			}
 		});
@@ -175,15 +180,35 @@ public class GASettings extends JFrame {
     	springPanel.add(writeLogLabel);
     	springPanel.add(writeLogCheckBox);
     	springPanel.add(writeLogTextField);
-    	//springPanel.add(invisLabel4);
-    	//springPanel.add(invisLabel5);
     	
     	// Formats the panel and creates the grid
     	SpringUtilities.makeCompactGrid(springPanel,
     	                                (numLabels + 2), 3, // lines, columns
     	                                6, 6,        // initX, initY
     	                                6, 6);       // xPad, yPad
-    	    	
+    	
+    	// If there are saved settings on DB, populate them
+    	ArrayList<SettingsPOJO> previousSettings = null;
+    	try {
+			previousSettings = SettingsDAO.getInstance().getParameters();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    	if(previousSettings != null) { // Use the last saved settings --> (previousSettings.size()-1)
+    		settingsSliders.get(0).setValue(previousSettings.get(previousSettings.size()-1).getIndividualSize());
+    		settingsSliders.get(1).setValue(previousSettings.get(previousSettings.size()-1).getPopulationSize());
+    		settingsSliders.get(2).setValue(previousSettings.get(previousSettings.size()-1).getNumOfCrossoverPoints());
+    		finalMutationRateField.setText(Double.toString(previousSettings.get(previousSettings.size()-1).getMutationRate()));
+    		settingsSliders.get(3).setValue(previousSettings.get(previousSettings.size()-1).getMaxPreservedIndividuals());
+    		settingsSliders.get(4).setValue(previousSettings.get(previousSettings.size()-1).getNumOfFitIndividualsToStop());
+    		settingsSliders.get(5).setValue(previousSettings.get(previousSettings.size()-1).getMaxGenerationsToStop());
+    		settingsCheckboxes.get(0).setSelected(previousSettings.get(previousSettings.size()-1).isScheduledKeyGeneration());
+    		minutesField.setText(Integer.toString(previousSettings.get(previousSettings.size()-1).getScheduledKeyGenerationTime()));
+    		settingsCheckboxes.get(1).setSelected(previousSettings.get(previousSettings.size()-1).isWriteLog());
+    		
+    	}
+    	
     	JPanel buttonsPanel = new JPanel();
     	buttonsPanel.setLayout(new GridLayout(1, 3, 10, 0));
     	
@@ -194,10 +219,7 @@ public class GASettings extends JFrame {
     			// TODO Save user values to database
 				// Verify that all fields are positive numbers and aren't empty
 				try {
-					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
-						
-						SettingsPOJO newSettings = new SettingsPOJO();
-						
+					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {						
 						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
 						newSettings.setPopulationSize(settingsSliders.get(1).getValue());
 						newSettings.setNumOfCrossoverPoints(settingsSliders.get(2).getValue());
@@ -205,15 +227,20 @@ public class GASettings extends JFrame {
 						newSettings.setMaxPreservedIndividuals(settingsSliders.get(3).getValue());
 						newSettings.setNumOfFitIndividualsToStop(settingsSliders.get(4).getValue());
 						newSettings.setMaxGenerationsToStop(settingsSliders.get(5).getValue());
-						boolean boolValue = settingsCheckboxes.get(0).isSelected();
-						newSettings.setScheduleKeyGeneration(boolValue);
-						/*
-						if(boolValue) {
-							// TODO Save the user set scheduled minutes for generation.
-						}
-						*/
-						boolValue = settingsCheckboxes.get(1).isSelected();
-						newSettings.setWriteLog(boolValue);
+						newSettings.setScheduledKeyGeneration(settingsCheckboxes.get(0).isSelected());
+						newSettings.setWriteLog(settingsCheckboxes.get(1).isSelected());
+						
+						// Apply the newly set parameters
+						Settings.setIndividualSize(newSettings.getIndividualSize());
+						Settings.setPopulationSize(newSettings.getPopulationSize());
+						Settings.setNumOfCrossoverPoints(newSettings.getNumOfCrossoverPoints());
+						Settings.setMutationRate(newSettings.getMutationRate());
+						Settings.setMaxPreservedIndividuals(newSettings.getMaxPreservedIndividuals());
+						Settings.setNumOfFitIndividualsToStop(newSettings.getNumOfFitIndividualsToStop());
+						Settings.setMaxGenerationsToStop(newSettings.getMaxGenerationsToStop());
+						Settings.setScheduledKeyGeneration(newSettings.isScheduledKeyGeneration());
+						Settings.setScheduledKeyGenerationTime(newSettings.getScheduledKeyGenerationTime());
+						Settings.setWriteLog(newSettings.isWriteLog());
 						
 						// Save to database
 						if(SettingsDAO.getInstance().newSettings(newSettings) != -1) {

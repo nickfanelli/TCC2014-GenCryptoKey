@@ -69,17 +69,20 @@ public class SettingsDAO {
 			String sqlCmd;
 			
 			sqlCmd = "INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, CROSSOVERPOINTS, MUTATIONRATE, "
-						+ "PRESERVEDINDIVIDUALS, FITINDIVIDUALSTOSTOP, GENERATIONSTOSTOP, SCHEDULEKEYGENERATION, WRITELOG) "
-						+ "VALUES (" + 
-						parameter.getIndividualSize() + ", " + 
-						parameter.getPopulationSize() + ", " +
-						parameter.getNumOfCrossoverPoints() + ", " + 
-						parameter.getMutationRate() + ", " + 
-						parameter.getMaxPreservedIndividuals() + ", " + 
-						parameter.getNumOfFitIndividualsToStop() + ", " + 
-						parameter.getMaxGenerationsToStop() + ", " + 
-						parameter.isScheduleKeyGeneration() + ", " + 
-						parameter.isWriteLog()+ ")";
+												+ "PRESERVEDINDIVIDUALS, FITINDIVIDUALSTOSTOP, GENERATIONSTOSTOP, "
+												+ "SCHEDULEDKEYGENERATION, SCHEDULEDKEYGENERATIONTIME, WRITELOG) "
+												+ "VALUES (" + 
+												parameter.getIndividualSize() + ", " + 
+												parameter.getPopulationSize() + ", " +
+												parameter.getNumOfCrossoverPoints() + ", " + 
+												parameter.getMutationRate() + ", " + 
+												parameter.getMaxPreservedIndividuals() + ", " + 
+												parameter.getNumOfFitIndividualsToStop() + ", " + 
+												parameter.getMaxGenerationsToStop() + ", " + 
+												parameter.isScheduledKeyGeneration() + ", " +
+												parameter.getScheduledKeyGenerationTime() + ", " + 
+												parameter.isWriteLog()+ ")";
+			
 			try{
 				return db.execCommand(sqlCmd);
 			}catch(Exception e){
@@ -122,8 +125,10 @@ public class SettingsDAO {
 				              		parameter.getNumOfFitIndividualsToStop() +
 				              ", GENERATIONSTOSTOP=" + 
 				              		parameter.getMaxGenerationsToStop() +
-				              ", SCHEDULEKEYGENERATION=" + 
-				              		parameter.isScheduleKeyGeneration() +
+				              ", SCHEDULEDKEYGENERATION=" + 
+				              		parameter.isScheduledKeyGeneration() +
+				              ", SCHEDULEDKEYGENERATIONTIME=" + 
+				              		parameter.getScheduledKeyGenerationTime() +
 				              ", WRITELOG=" + 
 				              		parameter.isWriteLog() +
 		              " WHERE ID=" + parameter.getParameterID();
@@ -150,7 +155,8 @@ public class SettingsDAO {
 	                           rs.getInt("PRESERVEDINDIVIDUALS"),
 	                           rs.getInt("FITINDIVIDUALSTOSTOP"),
 	                           rs.getInt("GENERATIONSTOSTOP"),
-	                           rs.getBoolean("SCHEDULEKEYGENERATION"),
+	                           rs.getBoolean("SCHEDULEDKEYGENERATION"),
+	                           rs.getInt("SCHEDULEDKEYGENERATIONTIME"),
 	                           rs.getBoolean("WRITELOG"));
 
 	        rs.close();
@@ -179,7 +185,8 @@ public class SettingsDAO {
 	        		parameter.setMaxPreservedIndividuals(rs.getInt("PRESERVEDINDIVIDUALS"));
 	        		parameter.setNumOfFitIndividualsToStop(rs.getInt("FITINDIVIDUALSTOSTOP"));
 	        		parameter.setMaxGenerationsToStop(rs.getInt("GENERATIONSTOSTOP"));
-	        		parameter.setScheduleKeyGeneration(rs.getBoolean("SCHEDULEKEYGENERATION"));
+	        		parameter.setScheduledKeyGeneration(rs.getBoolean("SCHEDULEDKEYGENERATION"));
+	        		parameter.setScheduledKeyGenerationTime(rs.getInt("SCHEDULEDKEYGENERATIONTIME"));
 	        		parameter.setWriteLog(rs.getBoolean("WRITELOG"));
 	        		
 	        		parameters.add(parameter);

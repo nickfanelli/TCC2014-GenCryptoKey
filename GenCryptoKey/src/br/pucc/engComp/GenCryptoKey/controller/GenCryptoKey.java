@@ -10,7 +10,14 @@ public final class GenCryptoKey {
     	DB.getConnection();
     
         // Solution ("ideal key")
-        FitnessCalc.setSolution("111010101010111111111111111111111001100110011111111111111111000011111111111111111111111011011111111101100111000111111111111100001111111111111111111111001001001111111111000000000111111111110000");
+    	StringBuffer solution = new StringBuffer();
+    	for(int i = 0; i < Settings.getIndividualSize(); i++) {
+    		solution.append(Settings.getCharSet().charAt(new Double(Math.floor(Math.random() * Settings.getCharSet().length())).intValue()));
+    	}
+    	System.out.println("Solution: " + solution);
+    	
+    	FitnessCalc.setSolution(solution.toString());
+        //FitnessCalc.setSolution("111010101010111111111111111111111001100110011111111111111111000011111111111111111111111011011111111101100111000111111111111100001111111111111111111111001001001111111111000000000111111111110000");
 
         // Initial population
         Population myPop = new Population();
@@ -20,6 +27,7 @@ public final class GenCryptoKey {
         while (myPop.getFittest().getFitness() < FitnessCalc.getMaxFitness()) {
             generationCount++;
             System.out.println("Geracao: " + generationCount + " Fittest: " + myPop.getFittest().getFitness());
+            //System.out.println("Indiv: " + myPop.getFittest());
             GA.evolvePopulation(myPop);
         }
         System.out.println("Solucao encontrada!");

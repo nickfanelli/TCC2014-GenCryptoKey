@@ -2,13 +2,13 @@ package br.pucc.engComp.GenCryptoKey.controller;
 
 public class Individual implements Comparable<Individual> {
 
-    private byte[] genes = new byte[Settings.getIndividualLength()]; // default = 192
+    private byte[] genes = new byte[Settings.getIndividualSize()]; // default = 192
     private int fitness = -1;
 
     // Generate random individual
     public Individual() {
-        for (int i = 0; i < Settings.getIndividualLength(); i++) {
-            byte gene = (byte) Math.round(Math.random());
+        for (int i = 0; i < Settings.getIndividualSize(); i++) {
+            byte gene = (byte) Settings.getCharSet().charAt(new Double(Math.floor(Math.random() * Settings.getCharSet().length())).intValue());
             genes[i] = gene;
         }
     }
@@ -38,8 +38,8 @@ public class Individual implements Comparable<Individual> {
     @Override
     public String toString() {
         String geneString = "";
-        for (int i = 0; i < Settings.getIndividualLength(); i++) {
-            geneString += getGene(i);
+        for (int i = 0; i < Settings.getIndividualSize(); i++) {
+            geneString += (char) getGene(i);
         }
         return geneString;
     }

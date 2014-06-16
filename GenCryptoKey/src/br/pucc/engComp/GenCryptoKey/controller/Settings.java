@@ -11,11 +11,14 @@ public class Settings {
 	private static int numOfFitIndividualsToStop = 1;
 	private static int maxGenerationsToStop = 2000;
 	private static boolean scheduledKeyGeneration = false;
+	private static int scheduledKeyGenerationTime = 0;
 	private static boolean writeLog = false;
 	
-	String charSet = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ'\"0123456789!@#$%*()-_+=`[{~^]},<.>;:/?";
+	// 92 chars
+	private static String charSet = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ'\"0123456789!@#$%*()-_+=`[{~^]},<.>;:/?\\";
 	
 	public Settings(){
+		
 	}
 
 	/* Getters & setters*/
@@ -28,12 +31,12 @@ public class Settings {
 		populationSize = newPopulationSize;
 	}
 
-	public static int getIndividualLength() {
+	public static int getIndividualSize() {
 		return individualSize;
 	}
 
-	public static void setIndividualLength(int newIndividualLength) {
-		individualSize = newIndividualLength;
+	public static void setIndividualSize(int newIndividualSize) {
+		individualSize = newIndividualSize;
 	}
 
 	public static int getNumOfCrossoverPoints() {
@@ -52,28 +55,28 @@ public class Settings {
 		mutationRate = newMutationRate;
 	}
 
-	public static int getMaxPopulationCutoff() {
+	public static int getMaxPreservedIndividuals() {
 		return maxPreservedIndividuals;
 	}
 
-	public static void setMaxPopulationCutoff(int newMaxPopulationCutoff) {
-		maxPreservedIndividuals = newMaxPopulationCutoff;
+	public static void setMaxPreservedIndividuals(int newMaxPreservedIndividuals) {
+		maxPreservedIndividuals = newMaxPreservedIndividuals;
 	}
 
-	public static int getNumOfFitIndividualsForStop() {
+	public static int getNumOfFitIndividualsToStop() {
 		return numOfFitIndividualsToStop;
 	}
 
-	public static void setNumOfFitIndividualsForStop(int newNumOfFitIndividualsForStop) {
-		numOfFitIndividualsToStop = newNumOfFitIndividualsForStop;
+	public static void setNumOfFitIndividualsToStop(int newNumOfFitIndividualsToStop) {
+		numOfFitIndividualsToStop = newNumOfFitIndividualsToStop;
 	}
 	
-	public static int getMaxGenerationIterations() {
+	public static int getMaxGenerationsToStop() {
 		return maxGenerationsToStop;
 	}
 
-	public static void setMaxGenerationIterations(int newMaxGenerationIterations) {
-		maxGenerationsToStop = newMaxGenerationIterations;
+	public static void setMaxGenerationsToStop(int newMaxGenerationsToStop) {
+		maxGenerationsToStop = newMaxGenerationsToStop;
 	}
 
 	public static boolean isScheduledKeyGeneration() {
@@ -84,11 +87,23 @@ public class Settings {
 		scheduledKeyGeneration = scheduledKeyGen;
 	}
 
+	public static int getScheduledKeyGenerationTime() {
+		return scheduledKeyGenerationTime;
+	}
+
+	public static void setScheduledKeyGenerationTime(int scheduledKeyGenerationTime) {
+		Settings.scheduledKeyGenerationTime = scheduledKeyGenerationTime;
+	}
+	
 	public static boolean isWriteLog() {
 		return writeLog;
 	}
 
 	public static void setWriteLog(boolean wLog) {
 		writeLog = wLog;
+	}
+	
+	public static String getCharSet() {
+		return charSet;
 	}
 }
