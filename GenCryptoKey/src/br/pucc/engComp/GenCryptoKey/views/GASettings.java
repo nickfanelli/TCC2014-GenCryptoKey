@@ -3,6 +3,7 @@ package br.pucc.engComp.GenCryptoKey.views;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -25,9 +26,9 @@ public class GASettings extends JFrame {
 	/**
 	 * Create the Settings frame.
 	 */
-	public GASettings() {
+	public GASettings(JFrame homeFrame) {
 		
-		final JFrame settingsFrame = new JFrame("Genetic Algorithm Settings");
+		final JDialog settingsFrame = new JDialog(homeFrame, "Genetic Algorithm Settings", true);
     	
     	String[] settingsLabels = {"Individual size: ", "Population size: ", "Crossover points: ", "Mutation rate: ",
     								"Preserved individuals: ", "Fit individuals to stop: ", "Generations to stop: "};
@@ -43,30 +44,7 @@ public class GASettings extends JFrame {
     	final ArrayList<JCheckBox> settingsCheckboxes = new ArrayList<JCheckBox>();
     	final ArrayList<JButton> settingsResetButtons = new ArrayList<JButton>();
     	JPanel parentPanel = new JPanel(new BorderLayout());
-    	
-    	/*
-    	JPanel headerPanel = new JPanel(new SpringLayout());
-    	headerPanel.setOpaque(true);
-    	JLabel invisLabel = new JLabel();
-    	JTextField invisTextField = new JTextField("5");
-    	JLabel defaultValuesLabel = new JLabel("Default");
-    	JLabel minimumValuesLabel = new JLabel("Min");
-    	JLabel maximumValuesLabel = new JLabel("Max");
-    	invisLabel.setVisible(false);
-    	invisTextField.setVisible(false);
-    	headerPanel.add(invisLabel);
-		headerPanel.add(invisTextField);
-		headerPanel.add(defaultValuesLabel);
-		headerPanel.add(minimumValuesLabel);
-		headerPanel.add(maximumValuesLabel);
-    	
-    	// Formats the panel and creates the grid
-    	SpringUtilities.makeCompactGrid(headerPanel,
-    	                                1, 5, // lines, columns
-    	                                6, 6,        // initX, initY
-    	                                6, 6);       // xPad, yPad
-    	*/
-    	
+    	    	
     	// Creates and populates the panel for the grid
     	JPanel springPanel = new JPanel(new SpringLayout());
     	springPanel.setOpaque(true);
@@ -95,27 +73,6 @@ public class GASettings extends JFrame {
     	    JButton resetParamButton = new JButton("Reset");
     	    springPanel.add(resetParamButton);
     	    settingsResetButtons.add(resetParamButton);
-    	    
-    	    /*
-    	    // Parameter (current) value
-    	    JTextField newValueTextField = new JTextField(5);
-    	    newValueTextField.setText(defaultSettingsValues[i]);
-    	    l.setLabelFor(newValueTextField);
-    	    springPanel.add(newValueTextField);
-    	    settingsValues.add(newValueTextField);
-    	    // Parameter default value
-    	    JTextField defaultValueTextField = new JTextField(defaultSettingsValues[i]);
-    	    defaultValueTextField.setEnabled(false);
-    	    springPanel.add(defaultValueTextField);
-    	    // Parameter minimum values
-    	    JTextField minimumValueTextField = new JTextField(minimumParameterValues[i]);
-    	    minimumValueTextField.setEnabled(false);
-    	    springPanel.add(minimumValueTextField);
-    	    // Parameter maximum values
-    	    JTextField maximumValueTextField = new JTextField(maximumParameterValues[i]);
-    	    maximumValueTextField.setEnabled(false);
-    	    springPanel.add(maximumValueTextField);
-    	    */
     	}
     	
     	// This JTextField is created out here so it can be accessed later
@@ -150,32 +107,70 @@ public class GASettings extends JFrame {
     	}
     	
     	JLabel scheduleLabel = new JLabel("Schedule key generation: ");
-    	JCheckBox scheduleCheckBox = new JCheckBox();
+    	final JCheckBox scheduleCheckBox = new JCheckBox();
     	settingsCheckboxes.add(scheduleCheckBox);
-    	//settingsSliders.add(scheduleCheckBox);
     	JTextField scheduleTextField = new JTextField("No");
-    	//JTextField invisLabel2 = new JTextField("5");
-    	//JTextField invisLabel3 = new JTextField("5");
     	scheduleTextField.setEnabled(false);
-    	//invisLabel2.setVisible(false);
-    	//invisLabel3.setVisible(false);
+    	scheduleCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				if(scheduleCheckBox.isSelected()) {
+					final JDialog scheduleKeyFrame = new JDialog(settingsFrame, "Schedule key generation", true);
+					scheduleKeyFrame.setSize(300, 100);
+					JPanel scheduleKeyPanel = new JPanel();
+					JPanel scheduleKeyTextPanel = new JPanel();
+					scheduleKeyPanel.setLayout(new GridLayout(2, 2, 10, 0));
+					scheduleKeyTextPanel.setLayout(new GridLayout(1, 2, 10, 0));
+					
+					JLabel scheduleKeyLabel = new JLabel("Generate keys every: ");
+					JLabel minutesLabel = new JLabel("minutes.");
+					JTextField minutesField = new JTextField();
+					minutesField.setSize(20, 10);
+					
+					JButton applyScheduleKeyButton = new JButton("Apply");
+					JButton cancelScheduleKeyButton = new JButton("Cancel");
+					
+					applyScheduleKeyButton.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							// TODO
+						}
+					});
+					
+					cancelScheduleKeyButton.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							scheduleKeyFrame.dispose();
+						}
+					});
+					
+					scheduleKeyPanel.add(scheduleKeyLabel);
+					scheduleKeyTextPanel.add(minutesField);
+					scheduleKeyTextPanel.add(minutesLabel);
+					scheduleKeyPanel.add(scheduleKeyTextPanel);
+					scheduleKeyPanel.add(applyScheduleKeyButton);
+					scheduleKeyPanel.add(cancelScheduleKeyButton);
+					
+					scheduleKeyFrame.setContentPane(scheduleKeyPanel);
+					scheduleKeyFrame.pack();
+					scheduleKeyFrame.validate();
+			    	scheduleKeyFrame.setResizable(false);
+			    	scheduleKeyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			    	scheduleKeyFrame.setLocationRelativeTo(null);
+					scheduleKeyFrame.setVisible(true);
+				}
+			}
+		});
     	
     	springPanel.add(scheduleLabel);
     	springPanel.add(scheduleCheckBox);
     	springPanel.add(scheduleTextField);
-    	//springPanel.add(invisLabel2);
-    	//springPanel.add(invisLabel3);
     	
     	JLabel writeLogLabel = new JLabel("Enable execution log: ");
     	JCheckBox writeLogCheckBox = new JCheckBox();
     	settingsCheckboxes.add(writeLogCheckBox);
-    	//settingsSliders.add(writeLogCheckBox);
     	JTextField writeLogTextField = new JTextField("No");
-    	//JTextField invisLabel4 = new JTextField("5");
-    	//JTextField invisLabel5 = new JTextField("5");
     	writeLogTextField.setEnabled(false);
-    	//invisLabel4.setVisible(false);
-    	//invisLabel5.setVisible(false);
     	
     	springPanel.add(writeLogLabel);
     	springPanel.add(writeLogCheckBox);
@@ -201,12 +196,6 @@ public class GASettings extends JFrame {
 				try {
 					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
 						
-						System.out.println("settingsSliders.size(): " + settingsSliders.size());
-						for (int u = 0; u < settingsSliders.size(); u++) {
-							System.out.println("settingsSliders.get(" + u + ").getValue(): " + settingsSliders.get(u).getValue());
-						}
-						System.out.println("checkbox[0]: " + settingsCheckboxes.get(0).isSelected());
-						System.out.println("checkbox[1]: " + settingsCheckboxes.get(1).isSelected());
 						SettingsPOJO newSettings = new SettingsPOJO();
 						
 						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
@@ -252,7 +241,6 @@ public class GASettings extends JFrame {
 			@Override
     		public void actionPerformed(ActionEvent evt) {
     			// Recover default values and set on the text fields
-				System.out.println("settingsSliders.size(): " + settingsSliders.size());
 				for(int i = 0; i < settingsSliders.size(); i++) {
 					if(i == 3) { // Skip the mutation rate index on the defaultSettingsValues list
 						settingsSliders.get(i).setValue(Integer.parseInt(defaultSettingsValues[i+1]));
@@ -277,6 +265,7 @@ public class GASettings extends JFrame {
     	parentPanel.add(buttonsPanel, BorderLayout.SOUTH);
     	settingsFrame.setContentPane(parentPanel);
     	settingsFrame.pack();
+    	settingsFrame.validate();
     	settingsFrame.setResizable(false);
     	settingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     	settingsFrame.setLocationRelativeTo(null);

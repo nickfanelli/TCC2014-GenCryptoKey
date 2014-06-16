@@ -1,7 +1,6 @@
 package br.pucc.engComp.GenCryptoKey.views;
 
 import br.pucc.engComp.GenCryptoKey.controller.GenCryptoKey;
-import br.pucc.engComp.GenCryptoKey.controller.UserPOJO;
 import br.pucc.engComp.GenCryptoKey.models.UserDAO;
 
 import java.awt.BorderLayout;
@@ -17,6 +16,7 @@ import java.awt.Dialog.ModalityType;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.SpringLayout;
@@ -33,9 +32,6 @@ import javax.swing.UIManager;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 @SuppressWarnings(value = { "serial" })
 public class Home extends JFrame {
@@ -91,129 +87,29 @@ public class Home extends JFrame {
 						viewExecutionLog = new JMenuItem("Execution log"),
 						helpAbout = new JMenuItem("About CryptoKey");
 		
+		try {
+			if(!UserDAO.getInstance().getUsers().isEmpty()) {
+				fileRegisterUser.setEnabled(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// Instantiates the menu bar
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
 		// Adding File menu to the menu bar
 		menuBar.add(fileMenu);
-		
+				
 		fileMenu.add(fileLogin);
 		fileLogin.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/login24px.png")));
 		fileLogin.addActionListener(new ActionListener(){
 			@Override
     		public void actionPerformed(ActionEvent evt) {
-    			final JFrame loginFrame = new JFrame("Login");
-    	    	String[] loginLabels = {"Username: ", "Password: "};
-    	    	int numLabels = loginLabels.length;
-    	    	
-    	    	final ArrayList<JTextField> valueFields = new ArrayList<JTextField>();
-    	    	
-    	    	JPanel parentPanel = new JPanel(new BorderLayout());
-    	    	
-    	    	// Formats the panel and creates the grid
-    	    	JPanel springPanel = new JPanel(new SpringLayout());
-    	    	springPanel.setOpaque(true);
-    	    	
-    	    	for (int i = 0; i < numLabels; i++) {
-    	    	    JLabel l = new JLabel(loginLabels[i], JLabel.TRAILING);
-    	    	    springPanel.add(l);
-    	    	    if(l.getText().toLowerCase().contains("password")){
-    	    	    	JPasswordField passwordTextField = new JPasswordField(10);
-    	    	    	l.setLabelFor(passwordTextField);
-        	    	    springPanel.add(passwordTextField);
-        	    	    valueFields.add(passwordTextField);
-    	    	    }else{
-    	    	    	JTextField loginTextField = new JTextField(10);
-    	    	    	l.setLabelFor(loginTextField);
-        	    	    springPanel.add(loginTextField);
-        	    	    valueFields.add(loginTextField);
-    	    	    }
-    	    	}
-    	    	
-    	    	// Formats the panel and creates the grid
-    	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // lines, columns
-    	    	                                6, 6,        // initX, initY
-    	    	                                6, 6);       // xPad, yPad
-    	    	
-    	    	
-    	    	JPanel buttonsPanel = new JPanel();
-    	    	buttonsPanel.setLayout(new GridLayout(1, 3, 10, 0));
-    	    	
-    	    	JButton loginButton = new JButton("Log In");
-    	    	loginButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evtvt) {
-    	    			// TODO Check database for registered user
-    	    			// If user info matches, set userLoggedIn
-    	    			// to enable session
-    					if(!valueFields.get(0).getText().isEmpty() && !valueFields.get(1).getText().isEmpty()) {
-    						UserPOJO user = new UserPOJO();
-    						
-    						user.setUsername(valueFields.get(0).getText());
-    						
-    						// Calculate SHA-1 hash of the user's input password
-    						StringBuffer sb = new StringBuffer();
-    						try {
-    							MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-    							byte[] result = mDigest.digest(valueFields.get(1).getText().getBytes());
-    							for (int i = 0; i < result.length; i++) {
-    								sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
-    							}
-    						}catch(NoSuchAlgorithmException nsae) {
-    							nsae.printStackTrace();
-    						}
-    						
-    						user.setPassword((valueFields.get(1).getText()));
-    						try {
-								if(UserDAO.getInstance().isRegistered(user)) {
-									System.out.println("User successfully logged in.");
-									loginFrame.dispose();
-								}else {
-									// TODO warn user of incorrect info
-									System.out.println("Usernamed and/or password are incorrect.");
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-    						
-    					}
-    					editUserInfo.setEnabled(true);
-    	    			editSettings.setEnabled(true);
-    					runGenerateKey.setEnabled(true);
-    					//runGenerateKeyGraphically.setEnabled(true);
-    	    			//viewLastGeneratedKey.setEnabled(true);
-    	    			//viewExecutionLog.setEnabled(true);
-    	            }
-    	    	});
-    	    	JButton cancelButton = new JButton("Cancel");
-    	    	cancelButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    	    			loginFrame.dispose();
-    	            }
-    	    	});
-    	    	JButton resetPasswordButton = new JButton("Forgot my password");
-    	    	resetPasswordButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    	    			// TODO Reset user password logic
-    	            }
-    	    	});
-    	    	
-    	    	buttonsPanel.add(loginButton);
-    	    	buttonsPanel.add(cancelButton);
-    	    	buttonsPanel.add(resetPasswordButton);
-    	    	
-    	    	parentPanel.add(springPanel, BorderLayout.NORTH);
-    	    	parentPanel.add(buttonsPanel, BorderLayout.SOUTH);
-    	    	loginFrame.setContentPane(parentPanel);
-    	    	loginFrame.pack();
-    	    	loginFrame.setResizable(false);
-    	    	loginFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	    	loginFrame.setLocationRelativeTo(null);
-    	    	loginFrame.setVisible(true);
+				new Login(homeFrame, editUserInfo, editSettings,
+														runGenerateKey, runGenerateKeyGraphically,
+														viewLastGeneratedKey, viewExecutionLog);
             }
     	});
 		
@@ -222,106 +118,8 @@ public class Home extends JFrame {
 		fileRegisterUser.addActionListener(new ActionListener(){
 			@Override			
     		public void actionPerformed(ActionEvent evt) {
-    			final JFrame registerUserFrame = new JFrame("Register user");
-    			String[] loginLabels = {"First name: ", "Last name: ", "E-Mail: ", "Confirm E-Mail: ",
-    									"Username: ", "Password: ", "Confirm password: "};
-    	    	int numLabels = loginLabels.length;
-    	    	
-    	    	final ArrayList<JTextField> valueFields = new ArrayList<JTextField>();
-    	    	
-    	    	JPanel parentPanel = new JPanel(new BorderLayout());
-    	    	
-    	    	// Creates and populates the panel for the grid
-    	    	JPanel springPanel = new JPanel(new SpringLayout());
-    	    	springPanel.setOpaque(true);
-    	    	
-    	    	for (int i = 0; i < numLabels; i++) {
-    	    	    JLabel l = new JLabel(loginLabels[i], JLabel.TRAILING);
-    	    	    springPanel.add(l);
-    	    	    if(l.getText().toLowerCase().contains("password")){
-    	    	    	JPasswordField passwordTextField = new JPasswordField(20);
-    	    	    	l.setLabelFor(passwordTextField);
-        	    	    springPanel.add(passwordTextField);
-        	    	    valueFields.add(passwordTextField);
-    	    	    }else{
-    	    	    	JTextField userInfologinTextField = new JTextField(20);
-    	    	    	l.setLabelFor(userInfologinTextField);
-        	    	    springPanel.add(userInfologinTextField);
-        	    	    valueFields.add(userInfologinTextField);
-    	    	    }
-    	    	}
-    	    	
-    	    	// Formats the panel and creates the grid
-    	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // lines, columns
-    	    	                                6, 6,        // initX, initY
-    	    	                                6, 6);       // xPad, yPad
-    	    	
-    	    	
-    	    	JPanel buttonsPanel = new JPanel();
-    	    	buttonsPanel.setLayout(new GridLayout(1, 2, 10, 0));
-    	    	
-    	    	JButton registerButton = new JButton("Register");
-    	    	registerButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    	    			// TODO Register user
-    	    			// Verify no field is empty before proceeding
-    	    			if(valueFields.get(0).getText().isEmpty()
-    	    					|| valueFields.get(1).getText().isEmpty()
-    	    					|| valueFields.get(2).getText().isEmpty()
-    	    					|| valueFields.get(3).getText().isEmpty()
-    	    					|| valueFields.get(4).getText().isEmpty()
-    	    					|| valueFields.get(5).getText().isEmpty()
-    	    					|| valueFields.get(6).getText().isEmpty()) {
-    	    				// One or more fields are empty
-    	    				// warn user
-    	    				
-    	    			}else if(!valueFields.get(2).getText().equals(valueFields.get(3).getText())){
-        	    				// E-mail & E-Mail confirmation fields have different values 
-        	    				// warn user
-        	    			}else if(!valueFields.get(5).getText().equals(valueFields.get(6).getText())){
-        	    				// Password & Password confirmation fields have different values
-        	    				// warn user
-        	    			}else{
-        	    				// If more than 1 user is allowed
-        	    				//Check if Username and or E-Mail isn't already in use
-        	    				UserPOJO newUser = new UserPOJO();
-        	    				newUser.setFirstName(valueFields.get(0).getText());
-        	    				newUser.setLastName(valueFields.get(1).getText());        	    				
-        	    				newUser.setEmail(valueFields.get(2).getText());
-        	    				newUser.setUsername(valueFields.get(4).getText());
-        	    				newUser.setPassword(valueFields.get(5).getText());
-        	    				
-        	    				try {
-									if(UserDAO.getInstance().newUser(newUser) != -1) {
-										System.out.println("User successfully registered.");
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-        	    			}
-    	    			}
-    	    	});
-    	    	JButton cancelButton = new JButton("Cancel");
-    	    	cancelButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    	    			registerUserFrame.dispose();
-    	            }
-    	    	});
-    	    	
-    	    	buttonsPanel.add(registerButton);
-    	    	buttonsPanel.add(cancelButton);
-    	    	
-    	    	parentPanel.add(springPanel, BorderLayout.NORTH);
-    	    	parentPanel.add(buttonsPanel, BorderLayout.SOUTH);
-    	    	registerUserFrame.setContentPane(parentPanel);
-    	    	registerUserFrame.pack();
-    	    	registerUserFrame.setResizable(false);
-    	    	registerUserFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	    	registerUserFrame.setLocationRelativeTo(null);
-    	    	registerUserFrame.setVisible(true);
+				new RegisterUser(homeFrame, fileRegisterUser);
+    			
             }
     	});
 		
@@ -345,102 +143,7 @@ public class Home extends JFrame {
 		editUserInfo.addActionListener(new ActionListener(){
 			@Override
     		public void actionPerformed(ActionEvent evt) {
-    			final JFrame editUserFrame = new JFrame("Edit user info");
-    			String[] loginLabels = {"First name: ", "Last name: ", "E-Mail: ", "Confirm E-Mail: ",
-    									"Username: ", "Password: ", "Confirm password: "};
-    	    	int numLabels = loginLabels.length;
-    	    	
-    	    	final ArrayList<JTextField> valueFields = new ArrayList<JTextField>();
-    	    	
-    	    	JPanel parentPanel = new JPanel(new BorderLayout());
-    	    	
-    	    	// Formats the panel and creates the grid
-    	    	JPanel springPanel = new JPanel(new SpringLayout());
-    	    	springPanel.setOpaque(true);
-    	    	
-    	    	for (int i = 0; i < numLabels; i++) {
-    	    	    JLabel l = new JLabel(loginLabels[i], JLabel.TRAILING);
-    	    	    springPanel.add(l);
-    	    	    if(l.getText().toLowerCase().contains("password")){
-    	    	    	JPasswordField passwordTextField = new JPasswordField(20);
-    	    	    	l.setLabelFor(passwordTextField);
-        	    	    springPanel.add(passwordTextField);
-        	    	    valueFields.add(passwordTextField);
-    	    	    }else{
-    	    	    	JTextField userInfologinTextField = new JTextField(20);
-    	    	    	l.setLabelFor(userInfologinTextField);
-        	    	    springPanel.add(userInfologinTextField);
-        	    	    valueFields.add(userInfologinTextField);
-    	    	    }
-    	    	}
-    	    	
-    	    	// Formats the panel and creates the grid
-    	    	SpringUtilities.makeCompactGrid(springPanel,
-    	    	                                numLabels, 2, // lines, columns
-    	    	                                6, 6,        // initX, initY
-    	    	                                6, 6);       // xPad, yPad
-    	    	
-    	    	// TODO Recover user info from database and set fields
-    	    	
-    	    	JPanel buttonsPanel = new JPanel();
-    	    	buttonsPanel.setLayout(new GridLayout(1, 3, 10, 0));
-    	    	
-    	    	JButton registerButton = new JButton("Save changes");
-    	    	registerButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    	    			// TODO Update user info
-    	    			// Verify no field is empty before proceeding
-    	    			if(valueFields.get(0).getText().isEmpty()
-    	    					|| valueFields.get(1).getText().isEmpty()
-    	    					|| valueFields.get(2).getText().isEmpty()
-    	    					|| valueFields.get(3).getText().isEmpty()
-    	    					|| valueFields.get(4).getText().isEmpty()
-    	    					|| valueFields.get(5).getText().isEmpty()
-    	    					|| valueFields.get(6).getText().isEmpty()){
-    	    				// One or more fields are empty
-    	    				// warn user
-    	    				
-    	    			}else if(!valueFields.get(2).getText().equals(valueFields.get(3).getText())){
-        	    				// E-mail & E-Mail confirmation fields have different values 
-        	    				// warn user
-        	    			}else if(!valueFields.get(5).getText().equals(valueFields.get(6).getText())){
-        	    				// Password & Password confirmation fields have different values
-        	    				// warn user
-        	    			}else{
-        	    				// If more than 1 user is allowed
-        	    				//Check if Username and or E-Mail isn't already in use
-        	    			}
-    	    			}
-    	    	});
-    	    	JButton cancelButton = new JButton("Cancel");
-    	    	cancelButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    					editUserFrame.dispose();
-    	            }
-    	    	});
-    	    	
-    	    	JButton deleteUserButton = new JButton("Delete user");
-    	    	deleteUserButton.addActionListener(new ActionListener(){
-    				@Override
-    	    		public void actionPerformed(ActionEvent evt) {
-    					editUserFrame.dispose();
-    	            }
-    	    	});
-    	    	
-    	    	buttonsPanel.add(registerButton);
-    	    	buttonsPanel.add(cancelButton);
-    	    	buttonsPanel.add(deleteUserButton);
-    	    	
-    	    	parentPanel.add(springPanel, BorderLayout.NORTH);
-    	    	parentPanel.add(buttonsPanel, BorderLayout.SOUTH);
-    	    	editUserFrame.setContentPane(parentPanel);
-    	    	editUserFrame.pack();
-    	    	editUserFrame.setResizable(false);
-    	    	editUserFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    	    	editUserFrame.setLocationRelativeTo(null);
-    	    	editUserFrame.setVisible(true);
+				new EditUser(homeFrame);
             }
     	});
 		
@@ -450,8 +153,7 @@ public class Home extends JFrame {
 		editSettings.addActionListener(new ActionListener(){
 			@Override
     		public void actionPerformed(ActionEvent evt) {
-    			GASettings frame = new GASettings();
-				frame.setVisible(true);
+    			new GASettings(homeFrame);
             }
     	});
 		
@@ -465,7 +167,7 @@ public class Home extends JFrame {
 			@Override
     		public void actionPerformed(ActionEvent evt) {
     			GenCryptoKey.run();
-    			JLabel generatedKey = new JLabel("Key generated!");
+    			JLabel generatedKey = new JLabel("<html><b>Key generated!</b></html>");
     			openMessageDialog(generatedKey, "Export to file");
             }
     	});
@@ -477,7 +179,7 @@ public class Home extends JFrame {
 			@Override
     		public void actionPerformed(ActionEvent evt) {
     			GenCryptoKey.runGraphically();
-    			// TODO
+    			// TODO graphic mode
             }
     	});
 		runGenerateKeyGraphically.setEnabled(false);
@@ -524,7 +226,7 @@ public class Home extends JFrame {
 	
 	// Internal class for dialogs that display messages to the user
 	class DialogPanel {
-		private final Dimension dialogSize = new Dimension(350, 75);
+		private final Dimension dialogSize = new Dimension(350, 100);
 		private JPanel dialogPanel = new JPanel();
 		
 		public DialogPanel() {
@@ -550,7 +252,7 @@ public class Home extends JFrame {
 		    		public void actionPerformed(ActionEvent evt) {
 		    			PrintWriter exportedKeyFile = null;
 		    			try {
-		    				exportedKeyFile = new PrintWriter("/home/nicholas/testExportkey.txt");
+		    				exportedKeyFile = new PrintWriter("/home/nicholas/testExportKey.txt");
 		    			}catch(FileNotFoundException fnfe) {
 		    				fnfe.printStackTrace();
 		    			}

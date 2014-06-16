@@ -70,16 +70,16 @@ public class SettingsDAO {
 			
 			sqlCmd = "INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, CROSSOVERPOINTS, MUTATIONRATE, "
 						+ "PRESERVEDINDIVIDUALS, FITINDIVIDUALSTOSTOP, GENERATIONSTOSTOP, SCHEDULEKEYGENERATION, WRITELOG) "
-						+ "VALUES ('" + 
-						parameter.getIndividualSize() + "', " + 
-						parameter.getPopulationSize() + ", '" +
-						parameter.getNumOfCrossoverPoints() + "', '" + 
-						parameter.getMutationRate() + "', '" + 
-						parameter.getMaxPreservedIndividuals() + "', '" + 
-						parameter.getNumOfFitIndividualsToStop() + "', '" + 
-						parameter.getMaxGenerationsToStop() + "', '" + 
-						parameter.isScheduleKeyGeneration() + "', '" + 
-						parameter.isWriteLog()+ "')";
+						+ "VALUES (" + 
+						parameter.getIndividualSize() + ", " + 
+						parameter.getPopulationSize() + ", " +
+						parameter.getNumOfCrossoverPoints() + ", " + 
+						parameter.getMutationRate() + ", " + 
+						parameter.getMaxPreservedIndividuals() + ", " + 
+						parameter.getNumOfFitIndividualsToStop() + ", " + 
+						parameter.getMaxGenerationsToStop() + ", " + 
+						parameter.isScheduleKeyGeneration() + ", " + 
+						parameter.isWriteLog()+ ")";
 			try{
 				return db.execCommand(sqlCmd);
 			}catch(Exception e){
@@ -109,24 +109,24 @@ public class SettingsDAO {
 
 		        cmdSQL = "UPDATE GASETTINGS SET " +
 				        		"INDIVIDUALSIZE=" +
-				              "'" + parameter.getIndividualSize() + "'" +
+				        			parameter.getIndividualSize() +
 				              ", POPULATIONSIZE=" + 
-				              "'" + parameter.getPopulationSize() + "'" +
+				              		parameter.getPopulationSize() +
 				              ", CROSSOVERPOINTS=" + 
-				              "'" + parameter.getNumOfCrossoverPoints() + "'" +
+				              		parameter.getNumOfCrossoverPoints() +
 				              ", MUTATIONRATE=" + 
-				              "'" + parameter.getMutationRate() + "'" +
+				              		parameter.getMutationRate() +
 				              ", PRESERVEDINDIVIDUALS=" + 
-				              "'" + parameter.getMaxPreservedIndividuals() + "'" +
+				              		parameter.getMaxPreservedIndividuals() +
 				              ", FITINDIVIDUALSTOSTOP=" + 
-				              "'" + parameter.getNumOfFitIndividualsToStop() + "'" +
+				              		parameter.getNumOfFitIndividualsToStop() +
 				              ", GENERATIONSTOSTOP=" + 
-				              "'" + parameter.getMaxGenerationsToStop() + "'" +
+				              		parameter.getMaxGenerationsToStop() +
 				              ", SCHEDULEKEYGENERATION=" + 
-				              "'" + parameter.isScheduleKeyGeneration() + "'" +
+				              		parameter.isScheduleKeyGeneration() +
 				              ", WRITELOG=" + 
-				              "'" + parameter.isWriteLog() + "'" +
-		              "WHERE ID=" + parameter.getParameterID();
+				              		parameter.isWriteLog() +
+		              " WHERE ID=" + parameter.getParameterID();
 
 		        return db.execCommand(cmdSQL);
 	    }

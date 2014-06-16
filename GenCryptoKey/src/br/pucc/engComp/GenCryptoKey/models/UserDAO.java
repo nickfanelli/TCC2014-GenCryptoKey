@@ -40,17 +40,17 @@ public class UserDAO {
 		public boolean isRegistered(UserPOJO user) throws Exception {
 	        String query;
 
-	        query = "SELECT * FROM USERINFO WHERE USERNAME =" +
-	              user.getUsername() + "AND PASSWORD =" + user.getPassword();
+	        query = "SELECT * FROM USERINFO WHERE USERNAME = '" +
+	              user.getUsername() + "' AND PASSWORD = '" + user.getPassword() + "'";
 
 	        ResultSet rs = db.execQuery (query);
 
-	        boolean res = rs.first();  
+	        boolean res = rs.next();  
 	        rs.close();
 	        return res;
 	    }
 		
-		public void valideAttributes(UserPOJO user) throws Exception {
+		public void validateAttributes(UserPOJO user) throws Exception {
 			if (user == null)
 	            throw new Exception ("User not given.");
 
@@ -66,8 +66,8 @@ public class UserDAO {
 			String sqlCmd;
 			
 			sqlCmd = "INSERT INTO USERINFO (FIRSTNAME, LASTNAME, EMAIL, USERNAME, PASSWORD) VALUES ('" + 
-						user.getFirstName() + "', " + 
-						user.getLastName() + ", '" +
+						user.getFirstName() + "', '" + 
+						user.getLastName() + "', '" +
 						user.getEmail() + "', '" + 
 						user.getUsername() + "', '" + 
 						user.getPassword()+ "')";
@@ -95,7 +95,7 @@ public class UserDAO {
 
 		// Update user's personal information
 	    public int updateUser(UserPOJO user) throws Exception {
-	    		valideAttributes(user);;
+	    		validateAttributes(user);;
 	    		String cmdSQL;
 
 		        cmdSQL = "UPDATE USERINFO SET " +
