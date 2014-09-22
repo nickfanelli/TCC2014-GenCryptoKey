@@ -1,0 +1,19 @@
+http://iconmonstr.com/
+
+Keywords:
+
+ - user
+ - add
+ - log in
+ - log out / eject
+ - setttings
+ - about
+ - run
+ - file
+ - key
+ - calendar
+ - save
+ - eye / view
+ - close
+ - question / help
+ - info

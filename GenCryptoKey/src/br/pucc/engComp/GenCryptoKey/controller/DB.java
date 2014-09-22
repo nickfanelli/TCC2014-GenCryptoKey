@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DB {
-	
+
 	private static Connection conn = null;
-	// For convenience, using ArrayList to store statements in use to facilitate resource releasing after usage. 
+	// For convenience, using ArrayList to store statements in use to facilitate resource releasing after usage.
 	private List<PreparedStatement> prepStatementsInUse = new ArrayList<PreparedStatement>(); // list of PreparedStatements in use
 	// The ResultSet rs and PreparedStatement psUpdate must be of
 	// static type to be used further down by the static block
@@ -20,8 +20,10 @@ public class DB {
 	private static ResultSet rs = null;
 	private static PreparedStatement psUpdate = null;
 	private PreparedStatement psSelect = null;
-	
-	
+
+	// TODO: Transformar em singleton. Ver codigo abaixo
+	// private DB() {}
+
 	public static Connection getConnection() {
 		if (conn == null) {
 			try {
@@ -40,13 +42,13 @@ public class DB {
 		psUpdate = conn.prepareStatement(sqlCmd);
 		return psUpdate.executeUpdate();
 	}
-	
+
 	// Executes SELECT commands (queries)
 	public ResultSet execQuery(String sqlQuery) throws Exception {
 		psSelect = conn.prepareStatement(sqlQuery);
-		return this.psSelect.executeQuery();
+		return psSelect.executeQuery();
 	}
-	
+
 	// Releases all open resources to avoid unnecessary memory usage
 	public void closeConnection() throws Exception {
 		// Close ResultSet
@@ -58,56 +60,56 @@ public class DB {
 		}catch(SQLException sqle){
 			printSQLException(sqle);
 		}
-		
+
 		// Close the PreparedStatements
 		int i = 0;
 		while (!prepStatementsInUse.isEmpty()) {
-            // PreparedStatement extend Statement
-            PreparedStatement prepSt = prepStatementsInUse.remove(i);
-            try {
-                if (prepSt != null) {
-                	prepSt.close();
-                	prepSt = null;
-                }
-            } catch (SQLException sqle) {
-                printSQLException(sqle);
-            }
-        }
+			// PreparedStatement extend Statement
+			PreparedStatement prepSt = prepStatementsInUse.remove(i);
+			try {
+				if (prepSt != null) {
+					prepSt.close();
+					prepSt = null;
+				}
+			} catch (SQLException sqle) {
+				printSQLException(sqle);
+			}
+		}
 
-        // Close the Connection
-        try {
-            if (conn != null) {
-                conn.close();
-                conn = null;
-            }
-        } catch (SQLException sqle) {
-            printSQLException(sqle);
-        }
-		
+		// Close the Connection
+		try {
+			if (conn != null) {
+				conn.close();
+				conn = null;
+			}
+		} catch (SQLException sqle) {
+			printSQLException(sqle);
+		}
+
 	}
-	
-	 /** ## Method copied from Derby's SimpleApp demo include in installation package##
-     * Prints details of an SQLException chain to <code>System.err</code>.
-     * Details included are SQL State, Error code, Exception message.
-     *
-     * @param e the SQLException from which to print details.
-     */
-    public static void printSQLException(SQLException e)
-    {
-        // Unwraps the entire exception chain to unveil the real cause of the
-        // Exception.
-        while (e != null)
-        {
-            System.err.println("\n----- SQLException -----");
-            System.err.println("  SQL State:  " + e.getSQLState());
-            System.err.println("  Error Code: " + e.getErrorCode());
-            System.err.println("  Message:    " + e.getMessage());
-            // for stack traces, refer to derby.log or uncomment this:
-            //e.printStackTrace(System.err);
-            e = e.getNextException();
-        }
-    }
-	
+
+	/** ## Method copied from Derby's SimpleApp demo include in installation package##
+	 * Prints details of an SQLException chain to <code>System.err</code>.
+	 * Details included are SQL State, Error code, Exception message.
+	 *
+	 * @param e the SQLException from which to print details.
+	 */
+	public static void printSQLException(SQLException e)
+	{
+		// Unwraps the entire exception chain to unveil the real cause of the
+		// Exception.
+		while (e != null)
+		{
+			System.err.println("\n----- SQLException -----");
+			System.err.println("  SQL State:  " + e.getSQLState());
+			System.err.println("  Error Code: " + e.getErrorCode());
+			System.err.println("  Message:    " + e.getMessage());
+			// for stack traces, refer to derby.log or uncomment this:
+			//e.printStackTrace(System.err);
+			e = e.getNextException();
+		}
+	}
+
 	// Internal class Pair<F, S> is used to create tables,
 	// F is used for table names and
 	// S is used for the SQL statements
@@ -139,32 +141,31 @@ public class DB {
 	static {
 		getConnection();
 		List<Pair<String, String>> tables = new ArrayList<Pair<String, String>>();
-		
+
 		Pair<String, String> userInfoTable = new Pair<String, String>();
 		userInfoTable.setFirst("USERINFO");
-		userInfoTable.setSecond("create table USERINFO (ID int not null generated always as identity(start with 1, increment by 1), FIRSTNAME varchar(50), LASTNAME varchar(50), EMAIL varchar(100), USERNAME varchar(20), PASSWORD varchar(30), primary key(ID))");
-		
+		userInfoTable.setSecond("create table USERINFO (ID int not null generated always as identity(start with 1, increment by 1), FIRSTNAME varchar(50), LASTNAME varchar(50), EMAIL varchar(100), USERNAME varchar(20), PASSWORD varchar(64), BACKUPPASSWORD varchar(30), BACKUPPASSWORDHASH varchar(64), primary key(ID))");
+
 		Pair<String, String> settingsTable = new Pair<String, String>();
 		settingsTable.setFirst("GASETTINGS");
-		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONRATE int, PRESERVEDINDIVIDUALS int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
-		
+		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONSPERINDIVIDUAL int, MUTATIONRATE float, PRESERVEDINDIVIDUALS int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
+
 		Pair<String, String> generatedKeysTable = new Pair<String, String>();
 		generatedKeysTable.setFirst("GENERATEDKEYS");
 		generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(512), GENERATIONTIMESTAMP timestamp, primary key(ID))");
-		
+
 		tables.add(userInfoTable);
 		tables.add(settingsTable);
-		tables.add(generatedKeysTable); 
-		
+		tables.add(generatedKeysTable);
+
 		try {
 			DatabaseMetaData dbmd = conn.getMetaData();
 			for (Pair<String, String> table : tables) {
 				rs = dbmd.getTables(null, null, table.getFirst(), null);
 				if (!rs.next()) {
 					psUpdate = conn.prepareStatement(table.getSecond());
-					if (psUpdate.executeUpdate() == -1) {
+					if (psUpdate.executeUpdate() == -1)
 						throw new Exception("Failed to create table " + table.getFirst());
-					}
 				}
 			}
 		} catch (Exception e) {

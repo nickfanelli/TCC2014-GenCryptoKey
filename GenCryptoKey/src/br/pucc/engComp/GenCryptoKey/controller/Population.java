@@ -11,7 +11,7 @@ public class Population {
     // Create a population
     public Population() {
         individuals = new ArrayList<Individual>();
-        for(int i = 0; i < Settings.getPopulationSize(); ++i) {
+        for(int i = 0; i < Settings.getInitialPopulationSize(); ++i) {
         	individuals.add(new Individual());
         }
     }

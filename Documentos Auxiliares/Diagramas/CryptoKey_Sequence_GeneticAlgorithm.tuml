@@ -1,0 +1,25 @@
+@startuml
+title CryptoKey Genetic Algorithm <b>Sequence diagram</b>
+
+EvolvePopulation -> Crossover: InitialPopulation
+
+box "Genetic Algorithm" #LightBlue
+        participant Crossover
+        participant Mutate
+        participant Fitness
+        participant Selection
+end box
+
+Crossover -> Mutate: Offspring
+
+Mutate -> Fitness: Offspring
+activate Fitness
+
+Fitness -> Selection: Offspring
+
+Fitness <- Selection: FittestIndividuals
+deactivate Fitness
+
+EvolvePopulation <- Fitness: FittestIndividuals
+
+@enduml
