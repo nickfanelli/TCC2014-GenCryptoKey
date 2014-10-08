@@ -68,15 +68,17 @@ public class SettingsDAO {
 
 		String sqlCmd;
 
-		sqlCmd = "INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, CROSSOVERPOINTS, MUTATIONRATE, "
-				+ "PRESERVEDINDIVIDUALS, FITINDIVIDUALSTOSTOP, GENERATIONSTOSTOP, "
-				+ "SCHEDULEDKEYGENERATION, SCHEDULEDKEYGENERATIONTIME, WRITELOG) "
+		sqlCmd = "INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, CROSSOVERPOINTS, MUTATIONSPERINDIVIDUAL, "
+				+ "MUTATIONRATE, PERCENTAGEOFINDIVIDUALSTOCROSS, MAXIMUMPOPULATIONSIZE, FITINDIVIDUALSTOSTOP, "
+				+ "GENERATIONSTOSTOP, SCHEDULEDKEYGENERATION, SCHEDULEDKEYGENERATIONTIME, WRITELOG) "
 				+ "VALUES (" +
 				parameter.getIndividualSize() + ", " +
-				parameter.getPopulationSize() + ", " +
+				parameter.getInitialPopulationSize() + ", " +
 				parameter.getNumOfCrossoverPoints() + ", " +
+				parameter.getNumOfMutationsPerIndividual() + ", " +
 				parameter.getMutationRate() + ", " +
-				parameter.getMaxPreservedIndividuals() + ", " +
+				parameter.getPercentageOfIndividualsToCross() + ", " +
+				parameter.getMaxPopulationSize() + ", " +
 				parameter.getNumOfFitIndividualsToStop() + ", " +
 				parameter.getMaxGenerationsToStop() + ", " +
 				parameter.isScheduledKeyGeneration() + ", " +
@@ -114,13 +116,17 @@ public class SettingsDAO {
 				"INDIVIDUALSIZE=" +
 				parameter.getIndividualSize() +
 				", POPULATIONSIZE=" +
-				parameter.getPopulationSize() +
+				parameter.getInitialPopulationSize() +
 				", CROSSOVERPOINTS=" +
 				parameter.getNumOfCrossoverPoints() +
+				", MUTATIONSPERINDIVIDUAL=" +
+				parameter.getNumOfMutationsPerIndividual() +
 				", MUTATIONRATE=" +
 				parameter.getMutationRate() +
-				", PRESERVEDINDIVIDUALS=" +
-				parameter.getMaxPreservedIndividuals() +
+				", PERCENTAGEOFINDIVIDUALSTOCROSS=" +
+				parameter.getPercentageOfIndividualsToCross() +
+				", MAXIMUMPOPULATIONSIZE=" +
+				parameter.getMaxPopulationSize() +
 				", FITINDIVIDUALSTOSTOP=" +
 				parameter.getNumOfFitIndividualsToStop() +
 				", GENERATIONSTOSTOP=" +
@@ -153,7 +159,8 @@ public class SettingsDAO {
 				rs.getInt("CROSSOVERPOINTS"),
 				rs.getInt("MUTATIONSPERINDIVIDUAL"),
 				rs.getDouble("MUTATIONRATE"),
-				rs.getInt("PRESERVEDINDIVIDUALS"),
+				rs.getDouble("PERCENTAGEOFINDIVIDUALSTOCROSS"),
+				rs.getInt("MAXIMUMPOPULATIONSIZE"),
 				rs.getInt("FITINDIVIDUALSTOSTOP"),
 				rs.getInt("GENERATIONSTOSTOP"),
 				rs.getBoolean("SCHEDULEDKEYGENERATION"),
@@ -180,10 +187,12 @@ public class SettingsDAO {
 
 				settings.setSettingsID(rs.getInt("ID"));
 				settings.setIndividualSize(rs.getInt("INDIVIDUALSIZE"));
-				settings.setPopulationSize(rs.getInt("POPULATIONSIZE"));
+				settings.setInitialPopulationSize(rs.getInt("POPULATIONSIZE"));
 				settings.setNumOfCrossoverPoints(rs.getInt("CROSSOVERPOINTS"));
+				settings.setNumOfMutationsPerIndividual(rs.getInt("MUTATIONSPERINDIVIDUAL"));
 				settings.setMutationRate(rs.getDouble("MUTATIONRATE"));
-				settings.setMaxPreservedIndividuals(rs.getInt("PRESERVEDINDIVIDUALS"));
+				settings.setPercentageOfIndividualsToCross(rs.getDouble("PERCENTAGEOFINDIVIDUALSTOCROSS"));
+				settings.setMaxPopulationSize(rs.getInt("MAXIMUMPOPULATIONSIZE"));
 				settings.setNumOfFitIndividualsToStop(rs.getInt("FITINDIVIDUALSTOSTOP"));
 				settings.setMaxGenerationsToStop(rs.getInt("GENERATIONSTOSTOP"));
 				settings.setScheduledKeyGeneration(rs.getBoolean("SCHEDULEDKEYGENERATION"));

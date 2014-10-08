@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import br.pucc.engComp.GenCryptoKey.controller.Settings;
 import br.pucc.engComp.GenCryptoKey.controller.SettingsPOJO;
 import br.pucc.engComp.GenCryptoKey.models.SettingsDAO;
@@ -38,11 +37,11 @@ public class GASettings extends JFrame {
 
 		// TODO Retrieve all settings values from Settings class
 		String[] settingsLabels = {"Key size: ", "Initial population size: ", "Crossover points: ", "Number of mutations per individual:", "Mutation rate: ",
-				"Number of individuals to live: ", "Fit individuals to stop: ", "Maximum number of generations: "};
+				"Percentage of individuals to cross: ", "Maximum population size: ", "Fit individuals to stop: ", "Maximum number of generations: "};
 
-		final String[] defaultSettingsValues = {"1024",  "500",  "1",  "1", "0.015",  "50", "1",  "2000"};
-		String[] minimumParameterValues      = {"128",    "50",  "1",  "1", "0.005",  "10", "0",   "500"};
-		String[] maximumParameterValues      = {"3072", "5000", "10", "12",  "0.03", "500", "5", "10000"};
+		final String[] defaultSettingsValues = {"1024",  "500",  "1",  "1", "0.015", "0.5", "50", "1",  "2000"};
+		String[] minimumParameterValues      = {"128",    "50",  "1",  "1", "0.005", "0.20", "10", "1",   "500"};
+		String[] maximumParameterValues      = {"3072", "5000", "10", "12",  "0.03", "1.0", "500", "5", "10000"};
 
 		int numLabels = settingsLabels.length;
 
@@ -59,30 +58,32 @@ public class GASettings extends JFrame {
 		springPanel.setOpaque(true);
 
 		JTextField newMutationRateField = null;
+		final JTextField valueDisplayTextFieldMutationRate = new JTextField();
+		JTextField percentIndividualsToCross = null;
+		final JTextField valueDisplayTextFieldPercentToCross = new JTextField();
 		for (int i = 0; i < numLabels; i++) {
 			// Creating settings components ...
 			// Parameter label
 			JLabel parameterName = new JLabel(settingsLabels[i], JLabel.TRAILING);
 			springPanel.add(parameterName);
-			// Parameter slider
+			// Parameter slider or text field
 			if(i == 4){
 				newMutationRateField = new JTextField(defaultSettingsValues[i]);
 				parameterName.setLabelFor(newMutationRateField);
 				newMutationRateField.setEnabled(true);
 				springPanel.add(newMutationRateField);
-				//settingsSliders.add(newValueTextField);
 
-				final JTextField valueDisplayTextField = new JTextField(newMutationRateField.getText());
-				valueDisplayTextField.setName(parameterName.getName());
-				valueDisplayTextField.setEnabled(false);
-				springPanel.add(valueDisplayTextField);
-				settingsValueDisplay.add(valueDisplayTextField);
+				valueDisplayTextFieldMutationRate.setText(newMutationRateField.getText()); //= new JTextField(newMutationRateField.getText());
+				valueDisplayTextFieldMutationRate.setName(parameterName.getName());
+				valueDisplayTextFieldMutationRate.setEnabled(false);
+				springPanel.add(valueDisplayTextFieldMutationRate);
+				settingsValueDisplay.add(valueDisplayTextFieldMutationRate);
 
 				final JTextField mutationRateFieldAux = newMutationRateField;
 				newMutationRateField.addKeyListener(new KeyListener() {
 					@Override
 					public void keyReleased(KeyEvent arg0) {
-						valueDisplayTextField.setText(mutationRateFieldAux.getText());
+						valueDisplayTextFieldMutationRate.setText(mutationRateFieldAux.getText());
 					}
 
 					@Override
@@ -95,6 +96,35 @@ public class GASettings extends JFrame {
 					public void keyPressed(KeyEvent arg0) {
 						// Auto-generated method stub
 
+					}
+				});
+
+			}else if(i == 5){
+				// FIXME: Use JFormattedTextField to limit input characters and input size
+				percentIndividualsToCross = new JTextField(defaultSettingsValues[i]);
+				parameterName.setLabelFor(percentIndividualsToCross);
+				percentIndividualsToCross.setEnabled(true);
+				springPanel.add(percentIndividualsToCross);
+
+				valueDisplayTextFieldPercentToCross.setText(percentIndividualsToCross.getText()); //= new JTextField(percentIndividualsToCross.getText());
+				valueDisplayTextFieldPercentToCross.setName(parameterName.getName());
+				valueDisplayTextFieldPercentToCross.setEnabled(false);
+				springPanel.add(valueDisplayTextFieldPercentToCross);
+				settingsValueDisplay.add(valueDisplayTextFieldPercentToCross);
+
+				final JTextField percentIndividualsToCrossFieldAux = percentIndividualsToCross;
+				percentIndividualsToCross.addKeyListener(new KeyListener() {
+					@Override
+					public void keyReleased(KeyEvent arg0) {
+						valueDisplayTextFieldPercentToCross.setText(percentIndividualsToCrossFieldAux.getText());
+					}
+					@Override
+					public void keyTyped(KeyEvent arg0) {
+						// Auto-generated method stub
+					}
+					@Override
+					public void keyPressed(KeyEvent arg0) {
+						// Auto-generated method stub
 					}
 				});
 
@@ -133,6 +163,7 @@ public class GASettings extends JFrame {
 		// This JTextField is created out here (and is final) so it can be accessed later on
 		// to apply its value to the database
 		final JTextField finalMutationRateField = newMutationRateField;
+		final JTextField finalPercentIndividualsToCross = percentIndividualsToCross;
 
 		// Adding ActionListener to each individual setting Reset button
 		for(int i = 0; i < settingsResetButtons.size(); i++) {
@@ -284,18 +315,23 @@ public class GASettings extends JFrame {
 
 		if(previousSettings != null && !previousSettings.isEmpty()) { // Use the last saved settings --> (previousSettings.size()-1)
 			settingsSliders.get(0).setValue(previousSettings.get(previousSettings.size()-1).getIndividualSize());
-			settingsSliders.get(1).setValue(previousSettings.get(previousSettings.size()-1).getPopulationSize());
+			settingsSliders.get(1).setValue(previousSettings.get(previousSettings.size()-1).getInitialPopulationSize());
 			settingsSliders.get(2).setValue(previousSettings.get(previousSettings.size()-1).getNumOfCrossoverPoints());
 			settingsSliders.get(3).setValue(previousSettings.get(previousSettings.size()-1).getNumOfMutationsPerIndividual());
 			finalMutationRateField.setText(Double.toString(previousSettings.get(previousSettings.size()-1).getMutationRate()));
-			settingsSliders.get(4).setValue(previousSettings.get(previousSettings.size()-1).getMaxPreservedIndividuals());
+			valueDisplayTextFieldMutationRate.setText(finalMutationRateField.getText());
+			finalPercentIndividualsToCross.setText(Double.toString(previousSettings.get(previousSettings.size()-1).getPercentageOfIndividualsToCross()));
+			valueDisplayTextFieldPercentToCross.setText(finalPercentIndividualsToCross.getText());
+			settingsSliders.get(4).setValue(previousSettings.get(previousSettings.size()-1).getMaxPopulationSize());
 			settingsSliders.get(5).setValue(previousSettings.get(previousSettings.size()-1).getNumOfFitIndividualsToStop());
 			settingsSliders.get(6).setValue(previousSettings.get(previousSettings.size()-1).getMaxGenerationsToStop());
 			// Schedule key generation part
 			//			settingsCheckboxes.get(0).setSelected(previousSettings.get(previousSettings.size()-1).isScheduledKeyGeneration());
 			//			minutesField.setText(Integer.toString(previousSettings.get(previousSettings.size()-1).getScheduledKeyGenerationTime()));
 			settingsCheckboxes.get(0).setSelected(previousSettings.get(previousSettings.size()-1).isWriteLogActive());
-
+			if(settingsCheckboxes.get(0).isSelected()){
+				writeLogTextField.setText("Yes");
+			}
 		}
 
 		JPanel buttonsPanel = new JPanel();
@@ -305,21 +341,22 @@ public class GASettings extends JFrame {
 		applyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				// TODO Save user values to database
 				// Verify that all fields are positive numbers and aren't empty
 				try {
 					try {
 						Double.parseDouble(finalMutationRateField.getText());
+						Double.parseDouble(finalPercentIndividualsToCross.getText());
 					} catch (Exception ee) {
-						JOptionPane.showMessageDialog(null, "Mutation rate must be a number.");
+						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage of individuals to cross\" must be numbers.");
 					}
 					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
 						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
-						newSettings.setPopulationSize(settingsSliders.get(1).getValue());
+						newSettings.setInitialPopulationSize(settingsSliders.get(1).getValue());
 						newSettings.setNumOfCrossoverPoints(settingsSliders.get(2).getValue());
 						newSettings.setNumOfMutationsPerIndividual(settingsSliders.get(3).getValue());
 						newSettings.setMutationRate(Double.parseDouble(finalMutationRateField.getText().toString()));
-						newSettings.setMaxPreservedIndividuals(settingsSliders.get(4).getValue());
+						newSettings.setPercentageOfIndividualsToCross(Double.parseDouble(finalPercentIndividualsToCross.getText().toString()));
+						newSettings.setMaxPopulationSize(settingsSliders.get(4).getValue());
 						newSettings.setNumOfFitIndividualsToStop(settingsSliders.get(5).getValue());
 						newSettings.setMaxGenerationsToStop(settingsSliders.get(6).getValue());
 						// Schedule key generation part
@@ -328,11 +365,12 @@ public class GASettings extends JFrame {
 
 						// Apply the newly set parameters
 						Settings.setIndividualSize(newSettings.getIndividualSize());
-						Settings.setInitialPopulationSize(newSettings.getPopulationSize());
+						Settings.setInitialPopulationSize(newSettings.getInitialPopulationSize());
 						Settings.setNumOfCrossoverPoints(newSettings.getNumOfCrossoverPoints());
 						Settings.setNumOfMutationsPerIndividual(newSettings.getNumOfMutationsPerIndividual());
 						Settings.setMutationRate(newSettings.getMutationRate());
-						Settings.setMaxPopulationSize(newSettings.getMaxPreservedIndividuals());
+						Settings.setPercentageOfIndividualsToCross(newSettings.getPercentageOfIndividualsToCross());
+						Settings.setMaxPopulationSize(newSettings.getMaxPopulationSize());
 						Settings.setNumOfFitIndividualsToStop(newSettings.getNumOfFitIndividualsToStop());
 						Settings.setMaxGenerationsToStop(newSettings.getMaxGenerationsToStop());
 						// Schedule key generation part
@@ -346,7 +384,7 @@ public class GASettings extends JFrame {
 							settingsFrame.dispose();
 						}
 					}else {
-						System.out.println("!! ==> Mutation Rate must be a positive integer <== !!");
+						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage individuals to cross\" must be positive values.", "Illegal value", JOptionPane.ERROR_MESSAGE);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

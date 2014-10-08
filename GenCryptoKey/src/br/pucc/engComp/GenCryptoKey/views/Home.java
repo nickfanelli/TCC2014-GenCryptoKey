@@ -40,6 +40,16 @@ public class Home extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		/**
+		 * @@@@@@@@@@@ DEBUG ONLY @@@@@@@@@@@@@@
+		 * Uncomment this to bypass window mode
+		 */
+		//		GenCryptoKey.run();
+		//		if(1 != 0) return;
+		/**
+		 * @@@@@@@@@@@ DEBUG ONLY @@@@@@@@@@@@@@
+		 */
+
 		try {
 			//UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -212,7 +222,15 @@ public class Home extends JFrame {
 					}catch(FileNotFoundException fnfe) {
 						fnfe.printStackTrace();
 					}
-					exportedKeyFile.println(GenCryptoKey.getGeneratedKey());
+					exportedKeyFile.println("-----BEGIN RSA PUBLIC KEY-----");
+					exportedKeyFile.println("Public Exponent: " + GenCryptoKey.rsa.getE());
+					exportedKeyFile.println("Modulus: " + GenCryptoKey.rsa.getN());
+					exportedKeyFile.println("-----END RSA PUBLIC KEY-----");
+					exportedKeyFile.println();exportedKeyFile.println();
+					exportedKeyFile.println("-----BEGIN RSA PRIVATE KEY-----");
+					exportedKeyFile.println("Private Exponent: " + GenCryptoKey.rsa.getD());
+					exportedKeyFile.println("Modulus: " + GenCryptoKey.rsa.getN());
+					exportedKeyFile.println("-----END RSA PRIVATE KEY-----");
 					exportedKeyFile.close();
 				}
 			}

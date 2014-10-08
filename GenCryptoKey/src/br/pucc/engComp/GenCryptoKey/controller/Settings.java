@@ -8,6 +8,7 @@ public class Settings {
 	private static int numOfCrossoverPoints = 1;
 	private static int numOfMutationsPerIndividual = 1;
 	private static double mutationRate = 0.015;
+	private static double percentageOfIndividualsToCross = 0.5;
 	private static int maxPopulationSize = 50; // per generation
 	private static int numOfFitIndividualsToStop = 1;
 	private static int maxGenerationsToStop = 2000;
@@ -24,20 +25,20 @@ public class Settings {
 
 	/* Getters & setters*/
 
-	public static int getInitialPopulationSize() {
-		return initialPopulationSize;
-	}
-
-	public static void setInitialPopulationSize(int newInitialPopulationSize) {
-		initialPopulationSize = newInitialPopulationSize;
-	}
-
 	public static int getIndividualSize() {
 		return individualSize;
 	}
 
 	public static void setIndividualSize(int newIndividualSize) {
 		individualSize = newIndividualSize;
+	}
+
+	public static int getInitialPopulationSize() {
+		return initialPopulationSize;
+	}
+
+	public static void setInitialPopulationSize(int newInitialPopulationSize) {
+		initialPopulationSize = newInitialPopulationSize;
 	}
 
 	public static int getNumOfCrossoverPoints() {
@@ -62,6 +63,14 @@ public class Settings {
 
 	public static void setMutationRate(double newMutationRate) {
 		mutationRate = newMutationRate;
+	}
+
+	public static double getPercentageOfIndividualsToCross() {
+		return percentageOfIndividualsToCross;
+	}
+
+	public static void setPercentageOfIndividualsToCross(double percentageOfIndividualsToCross) {
+		Settings.percentageOfIndividualsToCross = percentageOfIndividualsToCross;
 	}
 
 	public static int getMaxPopulationSize() {

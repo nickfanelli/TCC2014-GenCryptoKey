@@ -148,7 +148,7 @@ public class DB {
 
 		Pair<String, String> settingsTable = new Pair<String, String>();
 		settingsTable.setFirst("GASETTINGS");
-		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONSPERINDIVIDUAL int, MUTATIONRATE float, PRESERVEDINDIVIDUALS int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
+		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONSPERINDIVIDUAL int, MUTATIONRATE float, PERCENTAGEOFINDIVIDUALSTOCROSS double, MAXIMUMPOPULATIONSIZE int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
 
 		Pair<String, String> generatedKeysTable = new Pair<String, String>();
 		generatedKeysTable.setFirst("GENERATEDKEYS");

@@ -4,28 +4,30 @@ public class SettingsPOJO {
 
 	private int settingsID;
 	private int individualSize;
-	private int populationSize;
+	private int initialPopulationSize;
 	private int numOfCrossoverPoints;
 	private int numOfMutationsPerIndividual;
 	private double mutationRate;
-	private int maxPreservedIndividuals;
+	private double percentageOfIndividualsToCross;
+	private int maxPopulationSize;
 	private int numOfFitIndividualsToStop;
 	private int maxGenerationsToStop;
 	private boolean scheduledKeyGeneration;
 	private int scheduledKeyGenerationTime;
 	private boolean writeLog;
 
-	public SettingsPOJO (int parameterID, int individualSize, int populationSize, int crossoverPoints,
-			int mutationsPerIndividual, double mutationRate, int preservedIndividuals,
-			int fitIndividualsToStop, int generationsToStop, boolean scheduledKeyGeneration,
-			int scheduledKeyGenerationTime, boolean writeLog){
+	public SettingsPOJO (int parameterID, int individualSize, int initPopulationSize, int crossoverPoints,
+			int mutationsPerIndividual, double mutationRate, double percentageOfIndividualsToCross,
+			int populationSize,	int fitIndividualsToStop, int generationsToStop,
+			boolean scheduledKeyGeneration,	int scheduledKeyGenerationTime, boolean writeLog){
 		setSettingsID(parameterID);
 		setIndividualSize(individualSize);
-		setPopulationSize(populationSize);
+		setInitialPopulationSize(initPopulationSize);
 		setNumOfCrossoverPoints(crossoverPoints);
 		setNumOfMutationsPerIndividual(mutationsPerIndividual);
 		setMutationRate(mutationRate);
-		setMaxPreservedIndividuals(preservedIndividuals);
+		setPercentageOfIndividualsToCross(percentageOfIndividualsToCross);
+		setMaxPopulationSize(populationSize);
 		setNumOfFitIndividualsToStop(fitIndividualsToStop);
 		setMaxGenerationsToStop(generationsToStop);
 		setScheduledKeyGeneration(scheduledKeyGeneration);
@@ -51,12 +53,12 @@ public class SettingsPOJO {
 		individualSize = newIndividualSize;
 	}
 
-	public int getPopulationSize() {
-		return populationSize;
+	public int getInitialPopulationSize() {
+		return initialPopulationSize;
 	}
 
-	public void setPopulationSize(int newPopulationSize) {
-		populationSize = newPopulationSize;
+	public void setInitialPopulationSize(int newInitialPopulationSize) {
+		initialPopulationSize = newInitialPopulationSize;
 	}
 
 	public int getNumOfCrossoverPoints() {
@@ -83,12 +85,20 @@ public class SettingsPOJO {
 		mutationRate = newMutationRate;
 	}
 
-	public int getMaxPreservedIndividuals() {
-		return maxPreservedIndividuals;
+	public double getPercentageOfIndividualsToCross() {
+		return percentageOfIndividualsToCross;
 	}
 
-	public void setMaxPreservedIndividuals(int newMaxPreservedIndividuals) {
-		maxPreservedIndividuals = newMaxPreservedIndividuals;
+	public void setPercentageOfIndividualsToCross(double percentageOfIndividualsToCross) {
+		this.percentageOfIndividualsToCross = percentageOfIndividualsToCross;
+	}
+
+	public int getMaxPopulationSize() {
+		return maxPopulationSize;
+	}
+
+	public void setMaxPopulationSize(int newMaxPreservedIndividuals) {
+		maxPopulationSize = newMaxPreservedIndividuals;
 	}
 
 	public int getNumOfFitIndividualsToStop() {
