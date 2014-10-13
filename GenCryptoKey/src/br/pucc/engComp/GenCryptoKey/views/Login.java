@@ -91,7 +91,7 @@ public class Login extends JFrame{
 							runGenerateKeyMenu.setEnabled(true);
 							// TODO Set to true once these functionalities are implemented.
 							runGenerateKeyGraphicallyMenu.setEnabled(false);
-							viewLastGeneratedKeyMenu.setEnabled(false);
+							viewLastGeneratedKeyMenu.setEnabled(true);
 							viewExecutionLogMenu.setEnabled(false);
 							loginFrame.dispose();
 						}else if(UserDAO.getInstance().isLoggingInWithBackupPassword(user)){
@@ -103,7 +103,7 @@ public class Login extends JFrame{
 							runGenerateKeyMenu.setEnabled(true);
 							// TODO Set to true once these functionalities are implemented.
 							runGenerateKeyGraphicallyMenu.setEnabled(false);
-							viewLastGeneratedKeyMenu.setEnabled(false);
+							viewLastGeneratedKeyMenu.setEnabled(true);
 							viewExecutionLogMenu.setEnabled(false);
 							JOptionPane.showMessageDialog(null, "You logged in using your backup password, which has now been changed. It is recommended you now update your password.", "Backup login", JOptionPane.INFORMATION_MESSAGE);
 							loginFrame.dispose();

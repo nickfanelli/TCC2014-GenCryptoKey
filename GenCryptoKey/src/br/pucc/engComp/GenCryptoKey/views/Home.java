@@ -211,27 +211,12 @@ public class Home extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				GenCryptoKey.run();
-				JLabel generatedKeyMessage = new JLabel("<html><b>Your key pair has been successfully generated!</b><br>Do you wish to export it to a file?</html>");
+				JLabel generatedKeyMessage = new JLabel("<html><b>Your keypair has been successfully generated!</b><br>Do you wish to view it now?</html>");
 				int confirmExportToFile = JOptionPane.showConfirmDialog(null, generatedKeyMessage, "Key generated",
 						JOptionPane.YES_NO_OPTION, 1,
 						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
 				if(confirmExportToFile == JOptionPane.YES_OPTION) {
-					PrintWriter exportedKeyFile = null;
-					try {
-						exportedKeyFile = new PrintWriter("C:\\Users\\Nick\\testExportKey.txt");
-					}catch(FileNotFoundException fnfe) {
-						fnfe.printStackTrace();
-					}
-					exportedKeyFile.println("-----BEGIN RSA PUBLIC KEY-----");
-					exportedKeyFile.println("Public Exponent: " + GenCryptoKey.rsa.getE());
-					exportedKeyFile.println("Modulus: " + GenCryptoKey.rsa.getN());
-					exportedKeyFile.println("-----END RSA PUBLIC KEY-----");
-					exportedKeyFile.println();exportedKeyFile.println();
-					exportedKeyFile.println("-----BEGIN RSA PRIVATE KEY-----");
-					exportedKeyFile.println("Private Exponent: " + GenCryptoKey.rsa.getD());
-					exportedKeyFile.println("Modulus: " + GenCryptoKey.rsa.getN());
-					exportedKeyFile.println("-----END RSA PRIVATE KEY-----");
-					exportedKeyFile.close();
+					new ViewGeneratedKeys(homeFrame);
 				}
 			}
 		});
@@ -251,13 +236,20 @@ public class Home extends JFrame {
 		// Adding 'View' menu to the menu bar
 		menuBar.add(viewMenu);
 
+		viewMenu.add(viewLastGeneratedKey);
 		viewLastGeneratedKey.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notesKey24px.png")));
 		viewLastGeneratedKey.setEnabled(false);
-		viewMenu.add(viewLastGeneratedKey);
+		viewLastGeneratedKey.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ViewGeneratedKeys(homeFrame);
+			}
+		});
 
+		viewMenu.add(viewExecutionLog);
 		viewExecutionLog.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notes24px.png")));
 		viewExecutionLog.setEnabled(false);
-		viewMenu.add(viewExecutionLog);
+
 
 		// Adding 'Help' menu to the menu bar
 		menuBar.add(helpMenu);

@@ -40,7 +40,7 @@ public class GASettings extends JFrame {
 				"Percentage of individuals to cross: ", "Maximum population size: ", "Fit individuals to stop: ", "Maximum number of generations: "};
 
 		final String[] defaultSettingsValues = {"1024",  "500",  "1",  "1", "0.015", "0.5", "50", "1",  "2000"};
-		String[] minimumParameterValues      = {"128",    "50",  "1",  "1", "0.005", "0.20", "10", "1",   "500"};
+		String[] minimumParameterValues      = {"128",    "50",  "1",  "1", "0.005", "0.20", "10", "1",   "10"};
 		String[] maximumParameterValues      = {"3072", "5000", "10", "12",  "0.03", "1.0", "500", "5", "10000"};
 
 		int numLabels = settingsLabels.length;
@@ -349,7 +349,8 @@ public class GASettings extends JFrame {
 					} catch (Exception ee) {
 						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage of individuals to cross\" must be numbers.");
 					}
-					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) >= 0) {
+					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) > 0 && Double.parseDouble(finalMutationRateField.getText()) <= 1
+							&& finalPercentIndividualsToCross != null && Double.parseDouble(finalPercentIndividualsToCross.getText()) > 0 && Double.parseDouble(finalPercentIndividualsToCross.getText()) <= 1) {
 						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
 						newSettings.setInitialPopulationSize(settingsSliders.get(1).getValue());
 						newSettings.setNumOfCrossoverPoints(settingsSliders.get(2).getValue());
@@ -384,7 +385,7 @@ public class GASettings extends JFrame {
 							settingsFrame.dispose();
 						}
 					}else {
-						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage individuals to cross\" must be positive values.", "Illegal value", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage individuals to cross\" must be positive values between 0 and 1.", "Illegal value", JOptionPane.ERROR_MESSAGE);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

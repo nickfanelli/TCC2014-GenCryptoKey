@@ -152,7 +152,8 @@ public class DB {
 
 		Pair<String, String> generatedKeysTable = new Pair<String, String>();
 		generatedKeysTable.setFirst("GENERATEDKEYS");
-		generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(512), GENERATIONTIMESTAMP timestamp, primary key(ID))");
+		generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(512), PUBLICEXPONENT varchar(5), PRIVATEEXPONENT varchar(3072), MODULUS (3072), GENERATIONTIMESTAMP timestamp, primary key(ID))");
+
 
 		tables.add(userInfoTable);
 		tables.add(settingsTable);

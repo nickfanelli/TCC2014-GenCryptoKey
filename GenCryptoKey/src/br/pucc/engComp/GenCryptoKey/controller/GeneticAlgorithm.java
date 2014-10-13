@@ -1,198 +1,147 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 
 public class GeneticAlgorithm {
 
 	// Evolve the population
-	public static void evolvePopulation(Population2 pop) {
-
-		//evaluateFitness(pop);
+	public static void evolvePopulation(Population pop) {
+		//		long tInicial = System.currentTimeMillis();
 
 		// Creation of new individuals through crossover using the current population
 		crossover(pop);
+		//		long tCrossEn = System.currentTimeMillis();
 
 		// Mutation
 		for (int i = 0; i < pop.getSize(); i++) {
 			mutate(pop.getIndividual(i));
 		}
+		//		long tMutateEn = System.currentTimeMillis();
 
 		// Calculate fitness values for population's individuals
 		evaluateFitness(pop);
+		//		long tEvEnd = System.currentTimeMillis();
 
 		// Selection of current fittest individuals
 		rankSelection(pop);
+		//		long tRankEn = System.currentTimeMillis();
+		//
+		//		long tElapsed = tRankEn - tInicial;
+		//		long durCross = tCrossEn - tInicial;
+		//		long durMutate = tMutateEn - tCrossEn;
+		//		long durEvalua = tEvEnd - tMutateEn;
+		//		long durRank = tRankEn - tEvEnd;
+		//
+		//		System.out.println(durCross/(double)tElapsed);
+		//		System.out.println(durMutate/(double)tElapsed);
+		//		System.out.println(durEvalua/(double)tElapsed);
+		//		System.out.println(durRank/(double)tElapsed);
 	}
 
 	/**
-	 * Fitness method.
-	 * @param pop population whose individuals are going to have their fitness evaluated
+	 * Fitness method.<br>
+	 * <i>H<sub>0</sub></i> : the distribution of 0s and 1s in the analyzed {@code Individual}s is random.<br>
+	 * <i>H<sub>1</sub></i> : the distribution of 0s and 1s in the analyzed {@code Individual}s is not random.<br>
+	 * Sets the {@code Individual}'s fitness value as the Euclidian Norm of
+	 * all applied fitness tests' results.
+	 * @param pop population whose individuals are going to have their fitness evaluated.
 	 */
-	public static void evaluateFitness(Population2 pop) {
+	public static void evaluateFitness(Population pop) {
+
+		double kolmogorovSmirnovTestResult = 0, chiSquareResult = 0, euclidianNorm = 0;
 
 		for(int i = 0; i < Settings.getMaxPopulationSize(); ++i) {
 			try {
 				HashMap<Integer, Integer> gapLengthsMap = GapTest.countGaps(pop.getIndividual(i).toBinaryString(), 2);
-				pop.getIndividual(i).setFitnessValue(KolmogorovSmirnovTest.calculateCriticalD(gapLengthsMap, pop.getIndividual(i).getBinaryStringSize(), 2));
-			} catch (IllegalArgumentException iae) {
-				System.out.println(iae.getMessage());
+				kolmogorovSmirnovTestResult = KolmogorovSmirnovTest.calculateCriticalD(gapLengthsMap, pop.getIndividual(i).getBinaryStringSize(), 2);
+				chiSquareResult = frequencyTest(pop.getIndividual(i));
+
+				// The Euclidian Norm is used as the fitness value to give fair weights
+				// to outlying values of either test results
+				euclidianNorm = Math.sqrt(Math.pow(kolmogorovSmirnovTestResult, 2) + Math.pow(chiSquareResult, 2));
+
+				pop.getIndividual(i).setFitnessValue(euclidianNorm);
+			} catch (IllegalArgumentException illArgExc) {
+				System.out.println(illArgExc.getMessage());
 			}
-
 		}
-
-		/** OLD CODE BELOW */
-
-		//		HashMap<BigInteger, String> nInBinaryMap = new HashMap<BigInteger, String>();
-		//		HashMap<BigInteger, Double> nFitnessMap = new HashMap<BigInteger, Double>();
-		//		BigInteger n;
-		//		for(int i = 0; i < Settings.getMaxPopulationSize(); ++i) {
-		//			// n = (p * q)
-		//			// Each individual's 'n' is converted to Binary and stored in nInBinaryMap for future evaluation
-		//			n = pop.getIndividual(i).getP().multiply(pop.getIndividual(i).getQ());
-		//			nInBinaryMap.put(n, n.toString(2));
-		//		}
-		//
-		//		Iterator<Entry<BigInteger, String>> it = nInBinaryMap.entrySet().iterator();
-		//		while(it.hasNext()) {
-		//			Map.Entry<BigInteger, String> entry = it.next();
-		//
-		//			nFitnessMap.put(entry.getKey(), gapTest(entry.getValue()) + frequencyTest(entry.getValue()));
-		//		}
-		//
-		//		return nFitnessMap;
 	}
 
-	//	private static double gapTest(String individual) {
-	//
-	//		/**
-	//		 * GAP TEST for the BINARY representation of N
-	//		 */
-	//		HashMap<Integer, Integer> numOfGapsPerDigit = new HashMap<Integer, Integer>();
-	//		HashMap<Integer, Integer> gapLengths = new HashMap<Integer, Integer>();
-	//
-	//		numOfGapsPerDigit.entrySet().iterator();
-	//		gapLengths.entrySet().iterator();
-	//
-	//		int individualLength = individual.length();
-	//
-	//		char digit;
-	//		int gapLength = 0, gapCount = 0;
-	//		boolean foundFirstDigit = false;
-	//
-	//		for(int i = 0; i <= 1; i++) {
-	//			// convert i to char, for later comparison
-	//			digit = Character.forDigit(i, 2);
-	//			gapLength = 0;
-	//			foundFirstDigit = false;
-	//			for(int j = 0; j < individualLength; j++) {
-	//				if(individual.charAt(j) == digit && !foundFirstDigit) { // Look for the first occurrence of digit 'k'
-	//					foundFirstDigit = true;
-	//					gapLength = 0;
-	//				} else if(individual.charAt(j) == digit && foundFirstDigit) { // Found the second occurrence
-	//					gapCount++;
-	//					Integer gapLengthKey = new Integer(gapLength);
-	//
-	//					Integer gapLengthValue = gapLengths.get(gapLengthKey);
-	//					if(gapLengthValue == null) {
-	//						gapLengths.put(gapLengthKey, 1);
-	//					} else {
-	//						gapLengths.put(gapLengthKey, gapLengthValue + 1);
-	//					}
-	//
-	//					gapLength = 0;
-	//				} else { // Still not equal to digit, keep counting gap length
-	//					gapLength++;
-	//				}
-	//			}
-	//			numOfGapsPerDigit.put(i, gapCount);
-	//			gapCount = 0;
-	//		}
-	//
-	//
-	//		Iterator<Entry<Integer, Integer>> itNumOfGapsPerDigit = numOfGapsPerDigit.entrySet().iterator();
-	//		while(itNumOfGapsPerDigit.hasNext()) {
-	//			Map.Entry<Integer, Integer> entry = itNumOfGapsPerDigit.next();
-	//
-	//			System.out.println("Digit " + entry.getKey() + " has " + entry.getValue() + " gaps.");
-	//		}
-	//
-	//		System.out.println("This individual has " + gapLengths.size() + " different gap lengths.");
-	//
-	//		Iterator<Entry<Integer, Integer>> itGapLengths = gapLengths.entrySet().iterator();
-	//
-	//		DecimalFormat doubleFormat = new DecimalFormat("#.####");
-	//		double countGapLengthClass = 0, gapFrequency = 0;
-	//		double gapRelativeFrequency = 0; // (gapFrequency / (binIndividualLength - 2))
-	//		double gapCumRelativeFrequency = 0; // Sum of all gapFrequency
-	//		double gapTheoreticalFrequency = 0; // F(x)
-	//		double modulusTheoreticalMinusObservedFrequency = 0; // |F(x) - Sn(x)|
-	//		double maxObservedModulus = 0;
-	//
-	//		if(itGapLengths.hasNext()) {
-	//			System.out.println("GapCumRelativeFrequency = " + gapCumRelativeFrequency);
-	//			System.out.println("Gap length || Frequency || Relative Frequency || Cum. Relative Frequency ||    F(x)    || |F(x) - Sn(x)|");
-	//			while(itGapLengths.hasNext()) {
-	//				Map.Entry<Integer, Integer> currentEntry = itGapLengths.next();
-	//
-	//				countGapLengthClass++;
-	//				gapFrequency = currentEntry.getValue();
-	//				gapRelativeFrequency = (gapFrequency / (individualLength - 2));
-	//				gapCumRelativeFrequency = gapCumRelativeFrequency + gapRelativeFrequency;
-	//				gapTheoreticalFrequency = 1 - Math.pow(0.9, countGapLengthClass + 1);
-	//				modulusTheoreticalMinusObservedFrequency = Math.abs(gapTheoreticalFrequency - gapCumRelativeFrequency);
-	//
-	//				if(modulusTheoreticalMinusObservedFrequency > maxObservedModulus) {
-	//					maxObservedModulus = modulusTheoreticalMinusObservedFrequency;
-	//				}
-	//
-	//				System.out.println("     " + currentEntry.getKey() + "     ||"
-	//						+ "    " + gapFrequency + "    ||"
-	//						+ "      " + doubleFormat.format(gapRelativeFrequency) + "      ||"
-	//						+ "          " + doubleFormat.format(gapCumRelativeFrequency) + "         ||"
-	//						+ "    " + doubleFormat.format(gapTheoreticalFrequency) + "    ||"
-	//						+ "  " + doubleFormat.format(modulusTheoreticalMinusObservedFrequency));
-	//
-	//			}
-	//		}
-	//		System.out.println("\n\n maxObservedModulus = " + doubleFormat.format(maxObservedModulus));
-	//		System.out.println("=====================\n\n\n");
-	//
-	//		numOfGapsPerDigit.clear();
-	//		gapLengths.clear();
-	//
-	//		return maxObservedModulus;
-	//	}
+	// FIXME: add the Phi-correlation coefficient? ( =  sqrt(Chi-square / max. population or individual size))
+	private static double frequencyTest(Individual individual) {
 
-	private static int frequencyTest(String binaryString) {
-		int frequencyFitness = 0;
-		// TODO
-		return frequencyFitness;
+		// expectedProbability = probability of 0 or 1 ( = 50% for a binary string)
+		double expectedProbability = 0.5;
+
+		// pOf0s = probability of 0s in the observed individual ( = 0s / size of the individual)
+		// pOf1s = probability of 1s in the observed individual ( = 1s / size of the individual)
+		double pOf0s = 0, pOf1s = 0;
+
+		// expected entropy = ( -p * log2(p) - (1-p) * log2(1-p) )
+		double expectedEntropy = ( ( - expectedProbability * (Math.log(expectedProbability)/Math.log(2) ) )
+				- ( (1 - expectedProbability) * (Math.log(1-expectedProbability)/Math.log(2)) ) );
+
+		//
+		long[] observedFrequencies = new long[]{0, 0};
+
+		// 1st -> calculate Shannon Entropy of the individual
+		observedFrequencies = PearsonsChiSquareTest.calculateObservedFrequencies(individual);
+		pOf0s = observedFrequencies[0] / (double) Settings.getIndividualSize();
+		pOf1s = observedFrequencies[1] / (double) Settings.getIndividualSize();
+
+		double observedEntropy = ( ( - pOf0s * (Math.log(pOf0s)/Math.log(2) ) )
+				- ( (1 - pOf1s) * (Math.log(1-pOf1s)/Math.log(2)) ) );
+
+		// 2nd -> Calculate Chi-square of the Shannon Entropy
+		double chiSquareShannonEntropyResult = PearsonsChiSquareTest.ChiSquareShannonEntropy(observedEntropy, expectedEntropy);
+
+		// 3rd -> Test the result against the critical value for the defined alpha
+		System.out.println("Fails to reject H0? : " + PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareShannonEntropyResult));
+		if(PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareShannonEntropyResult)) {
+			// fit individual according to frequency test
+		}
+
+		/* To calculate the Chi-square only over the frequencies,
+		 * comment all of the above and uncomment this block
+		long[] expectedFrequencies = new long[]{Settings.getIndividualSize()/2, Settings.getIndividualSize()/2};
+		double chiSquareResult = PearsonsChiSquareTest.ChiSquare(PearsonsChiSquareTest.calculateObservedFrequencies(individual), expectedFrequencies);
+
+		if(PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareResult)) {
+			// fit individual according to frequency test
+			System.out.println("Fails to reject H0? : " + PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareResult));
+		}
+		return chiSquareResult;
+		 */
+
+		return chiSquareShannonEntropyResult;
 	}
 
 	/**
 	 * Crossover method.
-	 * @param pop population over which the crossover operation is going to occur
+	 * @param pop population over which the crossover operation is going to occur.
 	 */
-	private static void crossover(Population2 pop) {
+	private static void crossover(Population pop) {
+		SecureRandom secRand = new SecureRandom();
 		// Loop through all individuals' applying the crossover to generate new individuals
-		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O(n)
-		for(int i = 0; i < Settings.getMaxPopulationSize(); ++i) {
-			for(int j = i+1; j < Settings.getMaxPopulationSize(); ++j) {
+		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O(n^2)
+		for(int i = 0; i < Settings.getMaxPopulationSize() * Settings.getPercentageOfIndividualsToCross(); ++i) {
+			for(int j = i+1; j < Settings.getMaxPopulationSize() * Settings.getPercentageOfIndividualsToCross(); ++j) {
 				// There is no need to choose a random crossover point, since
 				// the individual only has 2 genes to work with (p, q)
-				Individual2 ind1 = pop.newIndividual();
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Individual2 ind2 = pop.newIndividual();
+				Individual ind1 = pop.newIndividual(secRand);
+				//				try {
+				//					Thread.sleep(200);
+				//				} catch (InterruptedException e) {
+				//					// TODO Auto-generated catch block
+				//					e.printStackTrace();
+				//				}
+				Individual ind2 = pop.newIndividual(secRand);
 
 				// Population example: I1: {p1, q1} ; I2: {p2, q2} ; I3: {p3, q3} ; ... ; In: {pn, qn}
 				// Offspring after crossover of I1 and I2:
 				// C1: {p1, q2}; C2: {p2, q1}
-				// TODO It is possible to generate 2 more individuals in the offspring: C3: {p1, p2}; C4: {q1, q2}
+				// TODO: It is possible to generate 2 more individuals in the offspring: C3: {p1, p2}; C4: {q1, q2}
 
 				ind1.setP(pop.getIndividual(i).getP());
 				ind1.setQ(pop.getIndividual(j).getQ());
@@ -206,16 +155,16 @@ public class GeneticAlgorithm {
 
 	/**
 	 * Mutation method.
-	 * @param indiv individual to possibly have a gene mutated
+	 * @param indiv individual to possibly have a gene mutated.
 	 */
-	private static void mutate(Individual2 indiv) {
+	private static void mutate(Individual indiv) {
 		// If mutation chance passes (meaning it will occur)...
 		if (Math.random() <= Settings.getMutationRate()) {
 			// ...draw a random gene to be modified (0 or 1 == P or Q), since the 3rd gene (public exponent E) won't be modified.
 			//			(int) Math.floor(Math.random() * Settings.getIndividualSize()
 			int randomGene = (int) Math.floor(Math.random() * (indiv.getIndividual().size()-1));
 
-			// Mutation is performed by obtaining the next probable prime as placing it as the new value of the mutated gene
+			// Mutation is performed by obtaining the next probable prime and placing it as the new value of the mutated gene
 			// It will never be the same as number as the original gene.
 			indiv.getIndividual().set(randomGene, indiv.getIndividual().get(randomGene).nextProbablePrime());
 
@@ -237,9 +186,9 @@ public class GeneticAlgorithm {
 
 	/**
 	 * Selection method.
-	 * @param pop population from which individuals are going to be selected based on their fitness values
+	 * @param pop population from which individuals are going to be selected based on their fitness values.
 	 */
-	private static void rankSelection(Population2 pop) {
+	public static void rankSelection(Population pop) {
 		// Sorts the current population in descending order of fitness
 		pop.orderByFitness();
 
