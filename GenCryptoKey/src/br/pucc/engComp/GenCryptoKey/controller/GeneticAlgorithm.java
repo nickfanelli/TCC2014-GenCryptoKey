@@ -7,36 +7,36 @@ public class GeneticAlgorithm {
 
 	// Evolve the population
 	public static void evolvePopulation(Population pop) {
-		//		long tInicial = System.currentTimeMillis();
+		long tInicial = System.currentTimeMillis();
 
 		// Creation of new individuals through crossover using the current population
 		crossover(pop);
-		//		long tCrossEn = System.currentTimeMillis();
+		long tCrossEn = System.currentTimeMillis();
 
 		// Mutation
 		for (int i = 0; i < pop.getSize(); i++) {
 			mutate(pop.getIndividual(i));
 		}
-		//		long tMutateEn = System.currentTimeMillis();
+		long tMutateEn = System.currentTimeMillis();
 
 		// Calculate fitness values for population's individuals
 		evaluateFitness(pop);
-		//		long tEvEnd = System.currentTimeMillis();
+		long tEvEnd = System.currentTimeMillis();
 
 		// Selection of current fittest individuals
 		rankSelection(pop);
-		//		long tRankEn = System.currentTimeMillis();
-		//
-		//		long tElapsed = tRankEn - tInicial;
-		//		long durCross = tCrossEn - tInicial;
-		//		long durMutate = tMutateEn - tCrossEn;
-		//		long durEvalua = tEvEnd - tMutateEn;
-		//		long durRank = tRankEn - tEvEnd;
-		//
-		//		System.out.println(durCross/(double)tElapsed);
-		//		System.out.println(durMutate/(double)tElapsed);
-		//		System.out.println(durEvalua/(double)tElapsed);
-		//		System.out.println(durRank/(double)tElapsed);
+		long tRankEn = System.currentTimeMillis();
+
+		long tElapsed = tRankEn - tInicial;
+		long durCross = tCrossEn - tInicial;
+		long durMutate = tMutateEn - tCrossEn;
+		long durEvalua = tEvEnd - tMutateEn;
+		long durRank = tRankEn - tEvEnd;
+
+		System.out.println("Crossover duration: " + durCross/(double)tElapsed + "%");
+		System.out.println("Mutation duration: " + durMutate/(double)tElapsed + "%");
+		System.out.println("Evaluation duration: " + durEvalua/(double)tElapsed + "%");
+		System.out.println("Ranking duration: " + durRank/(double)tElapsed + "%");
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class GeneticAlgorithm {
 		double chiSquareShannonEntropyResult = PearsonsChiSquareTest.ChiSquareShannonEntropy(observedEntropy, expectedEntropy);
 
 		// 3rd -> Test the result against the critical value for the defined alpha
-		System.out.println("Fails to reject H0? : " + PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareShannonEntropyResult));
+		//		System.out.println("Fails to reject H0? : " + PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareShannonEntropyResult));
 		if(PearsonsChiSquareTest.isFailToRejectNullHypothesis(chiSquareShannonEntropyResult)) {
 			// fit individual according to frequency test
 		}

@@ -22,7 +22,7 @@ public class PearsonsChiSquareTest {
 		for(int i = 0; i < numOfCategories; i++) {
 			chiSquareResult += Math.pow((observedFrequencies[i] - expectedFrequencies[i]), 2) / expectedFrequencies[i];
 		}
-		System.out.println("ChiSquareResult: " + chiSquareResult);
+		//		System.out.println("ChiSquareResult: " + chiSquareResult);
 
 		return chiSquareResult;
 	}
@@ -32,7 +32,7 @@ public class PearsonsChiSquareTest {
 
 		chiSquareShannonEntropyResult = Math.pow((observedEntropy - expectedEntropy), 2) / expectedEntropy;
 
-		System.out.println("chiSquareShannonEntropyResult: " + chiSquareShannonEntropyResult);
+		//		System.out.println("chiSquareShannonEntropyResult: " + chiSquareShannonEntropyResult);
 
 		return chiSquareShannonEntropyResult;
 	}
@@ -52,7 +52,7 @@ public class PearsonsChiSquareTest {
 		// observedFrequencies[0] = frequency of 0s
 		// observedFrequencies[1] = frequency of 1s
 
-		System.out.println("getBinaryStringSize(): " + individual.getBinaryStringSize());
+		//		System.out.println("getBinaryStringSize(): " + individual.getBinaryStringSize());
 		for(int i = 0; i < individual.getBinaryStringSize(); i++) {
 			if(individual.toBinaryString().charAt(i) == '0') {
 				observedFrequencies[0] += 1; // increment frequency of 0s
@@ -60,8 +60,8 @@ public class PearsonsChiSquareTest {
 				observedFrequencies[1] += 1; // increment frequency of 1s
 			}
 		}
-		System.out.println("number of 0s: " + observedFrequencies[0]);
-		System.out.println("number of 1s: " + observedFrequencies[1]);
+		//		System.out.println("number of 0s: " + observedFrequencies[0]);
+		//		System.out.println("number of 1s: " + observedFrequencies[1]);
 		return observedFrequencies;
 	}
 }

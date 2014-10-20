@@ -8,69 +8,42 @@ import java.util.ArrayList;
 
 public class UserDAO {
 
-	private DB db;
-	private static UserDAO instance;
+	private UserDAO(){}
 
-	// Obtaining connection to the database using Singleton
-	public static UserDAO getInstance() {
-		if(instance == null) {
-			try{
-				DB db = new DB();
-				instance = new UserDAO(db);
-			}catch(Exception e){
-				e.printStackTrace();
-				return null;
-			}
-		}
-		return instance;
-	}
+	// Check whether user is registered on the database
+	public static boolean isRegistered(UserPOJO user) throws Exception {
 
-	public UserDAO (DB db) throws Exception{
-		if(instance == null) {
-			instance = this;
-			if (db == null)
-				throw new Exception ("No access to the database.");
-			this.db = db;
-		} else {
-			System.out.println("There already is an existing instance! No cookies for you!");
-		}
+		// TODO: Verificar pelo ID, isso aqui nao funciona... Especialmente se voce esta tentando trocar a senha, ele nao vai encontrar.
+
+		PreparedStatement ps = DB.getConnection().prepareStatement("SELECT * FROM USERINFO WHERE USERNAME = ? AND PASSWORD = ?");
+		ps.setString(1, user.getUsername());
+		ps.setString(2, user.getPassword());
+
+		ResultSet rs = ps.executeQuery();
+		boolean ans = rs.next();
+		rs.close();
+		ps.close();
+
+		return ans;
 	}
 
 	// Check whether user is registered on the database
-	public boolean isRegistered(UserPOJO user) throws Exception {
-		String query;
+	public static boolean isLoggingInWithBackupPassword(UserPOJO user) throws Exception {
 
-		// TODO: Arrumar toda a bagunca nos statements
-		// PreparedStatement ps = DB.getConnection().prepareStatement("SELECT * FROM USERINFO WHERE USERNAME = ? AND PASSWORD = ?");
-		// ps.setString(1, user.getUsername());
-		// ps.setString(2, user.getPassword());
-		// ps.executeQuery();
+		PreparedStatement ps = DB.getConnection().prepareStatement("SELECT * FROM USERINFO WHERE USERNAME = ? "
+				+ "AND BACKUPPASSWORDHASH = ?");
+		ps.setString(1, user.getUsername());
+		ps.setString(2, user.getBackupPasswordHash());
 
-		query = "SELECT * FROM USERINFO WHERE USERNAME = '" +
-				user.getUsername() + "' AND PASSWORD = '" + user.getPassword() + "'";
-
-		ResultSet rs = db.execQuery (query);
-
-		boolean res = rs.next();
+		ResultSet rs = ps.executeQuery();
+		boolean ans = rs.next();
 		rs.close();
-		return res;
+		ps.close();
+
+		return ans;
 	}
 
-	// Check whether user is registered on the database
-	public boolean isLoggingInWithBackupPassword(UserPOJO user) throws Exception {
-		String query;
-
-		query = "SELECT * FROM USERINFO WHERE USERNAME = '" +
-				user.getUsername() + "' AND BACKUPPASSWORDHASH = '" + user.getBackupPasswordHash() + "'";
-
-		ResultSet rs = db.execQuery (query);
-
-		boolean res = rs.next();
-		rs.close();
-		return res;
-	}
-
-	public void validateAttributes(UserPOJO user) throws Exception {
+	public static void validateAttributes(UserPOJO user) throws Exception {
 		if (user == null)
 			throw new Exception ("User not given.");
 
@@ -79,80 +52,88 @@ public class UserDAO {
 	}
 
 	// Insert new user
-	public int newUser(UserPOJO user) throws Exception {
+	public static int newUser(UserPOJO user) throws Exception {
 		if (user == null)
 			throw new Exception ("User not given.");
 
-		String sqlCmd;
+		int result;
 
-		sqlCmd = "INSERT INTO USERINFO (FIRSTNAME, LASTNAME, EMAIL, USERNAME, PASSWORD, BACKUPPASSWORD, BACKUPPASSWORDHASH) VALUES ('" +
-				user.getFirstName() + "', '" +
-				user.getLastName() + "', '" +
-				user.getEmail() + "', '" +
-				user.getUsername() + "', '" +
-				user.getPassword() + "', '" +
-				user.getBackupPassword() + "', '" +
-				user.getBackupPasswordHash() + "')";
+		PreparedStatement ps = DB.getPreparedStatement("INSERT INTO USERINFO (FIRSTNAME, LASTNAME, EMAIL, USERNAME, PASSWORD, BACKUPPASSWORD, BACKUPPASSWORDHASH) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
+		ps.setString(1, user.getFirstName());
+		ps.setString(2, user.getLastName());
+		ps.setString(3, user.getEmail());
+		ps.setString(4, user.getUsername());
+		ps.setString(5, user.getPassword());
+		ps.setString(6, user.getBackupPassword());
+		ps.setString(7, user.getBackupPasswordHash());
 
-		try{
-			return db.execCommand(sqlCmd);
-		}catch(Exception e){
-			e.printStackTrace();
-			throw new Exception ("User already registered.");
-		}
+		result = ps.executeUpdate();
+		ps.close();
 
+		return result;
 	}
 
 	// Remove user from database
-	public int deleteUser(UserPOJO user) throws Exception {
+	public static int deleteUser(UserPOJO user) throws Exception {
 		if (!isRegistered(user))
 			throw new Exception ("User not registered.");
 
-		String sqlCmd;
+		int result;
 
-		sqlCmd = "DELETE FROM USERINFO WHERE ID =" +
-				user.getUserID();
+		PreparedStatement ps = DB.getPreparedStatement("DELETE FROM USERINFO WHERE ID = ?");
+		ps.setInt(1, user.getUserID());
 
-		return db.execCommand (sqlCmd);
+		result = ps.executeUpdate();
+		ps.close();
+
+		return result;
 	}
 
 	// Update user's personal information
-	public int updateUser(UserPOJO user, boolean isUpdatingBackupPassword) throws Exception {
+	public static int updateUser(UserPOJO user, boolean isUpdatingBackupPassword) throws Exception {
 		if(!isUpdatingBackupPassword) {
 			validateAttributes(user);
 		}
 
-		String cmdSQL;
+		int result;
 
-		cmdSQL = "UPDATE USERINFO SET " +
-				"FIRSTNAME=" +
-				"'" + user.getFirstName() + "'" +
-				", LASTNAME=" +
-				"'" + user.getLastName() + "'" +
-				", EMAIL=" +
-				"'" + user.getEmail() + "'" +
-				", USERNAME=" +
-				"'" + user.getUsername() + "'" +
-				", PASSWORD=" +
-				"'" + user.getPassword() + "'" +
-				", BACKUPPASSWORD=" +
-				"'" + user.getBackupPassword() + "'" +
-				", BACKUPPASSWORDHASH=" +
-				"'" + user.getBackupPasswordHash() + "'" +
-				"WHERE ID=" + user.getUserID();
+		PreparedStatement ps = DB.getPreparedStatement("UPDATE USERINFO SET FIRSTNAME = ?, "
+				+ "LASTNAME = ?, "
+				+ "EMAIL = ?, "
+				+ "USERNAME = ?, "
+				+ "PASSWORD = ?, "
+				+ "BACKUPPASSWORD = ?,"
+				+ "BACKUPPASSWORDHASH = ?"
+				+ "WHERE ID = ? ");
 
-		return db.execCommand(cmdSQL);
+		ps.setString(1, user.getFirstName());
+		ps.setString(2, user.getLastName());
+		ps.setString(3, user.getEmail());
+		ps.setString(4, user.getUsername());
+		ps.setString(5, user.getPassword());
+		ps.setString(6, user.getBackupPassword());
+		ps.setString(7, user.getBackupPasswordHash());
+		ps.setInt(8, user.getUserID());
+
+		result = ps.executeUpdate();
+		ps.close();
+
+		return result;
 	}
 
-	public UserPOJO getUser(int userID) throws Exception {
-		String query;
+	public static UserPOJO getUser(int userID) throws Exception {
 
-		query = "SELECT * FROM USERINFO WHERE ID=" + userID;
+		PreparedStatement ps = DB.getPreparedStatement("SELECT * FROM USERINFO WHERE ID = ?");
+		ps.setInt(1, userID);
 
-		ResultSet rs = db.execQuery (query);
+		ResultSet rs = ps.executeQuery();
 
-		if (!rs.next())
+		if (!rs.next()) {
+			rs.close();
+			ps.close();
 			throw new Exception ("User not registered.");
+		}
 
 		UserPOJO user;
 		user = new UserPOJO (rs.getInt("ID"),
@@ -165,15 +146,15 @@ public class UserDAO {
 				rs.getString("BACKUPPASSWORDHASH"));
 
 		rs.close();
+		ps.close();
 		return user;
 	}
 
-	public ArrayList<UserPOJO> getUsers() throws Exception{
-		String query;
+	public static ArrayList<UserPOJO> getUsers() throws Exception{
 		ArrayList<UserPOJO> users = null;
-		query = "SELECT * FROM USERINFO";
+		PreparedStatement ps = DB.getPreparedStatement("SELECT * FROM USERINFO");
 
-		ResultSet rs = db.execQuery (query);
+		ResultSet rs = ps.executeQuery();
 
 		if(rs != null){
 			users = new ArrayList<UserPOJO>();
@@ -197,6 +178,7 @@ public class UserDAO {
 			}
 			rs.close();
 		}
+		ps.close();
 		return users;
 	}
 }

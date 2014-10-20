@@ -1,5 +1,6 @@
 package br.pucc.engComp.GenCryptoKey.views;
 
+import br.pucc.engComp.GenCryptoKey.controller.ExportKey;
 import br.pucc.engComp.GenCryptoKey.controller.GenCryptoKey;
 import br.pucc.engComp.GenCryptoKey.controller.OneInstanceLock;
 import br.pucc.engComp.GenCryptoKey.models.UserDAO;
@@ -21,19 +22,17 @@ import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.net.URL;
 
 @SuppressWarnings(value = { "serial" })
 public class Home extends JFrame {
 
 	private JPanel mainContentPane;
-	private JDialog modalDialog;
 
 	private static Home homeFrame;
 	/**
@@ -107,11 +106,12 @@ public class Home extends JFrame {
 				runGenerateKey = new JMenuItem("Generate new key"),
 				runGenerateKeyGraphically = new JMenuItem("Generate new key (graphical mode)"),
 				viewLastGeneratedKey = new JMenuItem("Last generated key"),
+				viewGeneratedKeypairsList = new JMenuItem("All generated keys list"),
 				viewExecutionLog = new JMenuItem("Execution log"),
 				helpAbout = new JMenuItem("About CryptoKey");
 
 		try {
-			if(UserDAO.getInstance().getUsers().isEmpty()) {
+			if(UserDAO.getUsers().isEmpty()) {
 				fileRegisterUser.setEnabled(true);
 				fileLogin.setEnabled(false);
 			}else{
@@ -119,6 +119,7 @@ public class Home extends JFrame {
 				fileLogin.setEnabled(true);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "An error occured trying to update your user information.", "Database error", JOptionPane.ERROR_MESSAGE);
 			System.out.println("Error loading user info from database: " + e.getMessage());
 		}
@@ -137,7 +138,7 @@ public class Home extends JFrame {
 			public void actionPerformed(ActionEvent evt) {
 				new Login(homeFrame, fileLogin, fileLogout, editUserInfo, editSettings,
 						runGenerateKey, runGenerateKeyGraphically,
-						viewLastGeneratedKey, viewExecutionLog);
+						viewLastGeneratedKey, viewGeneratedKeypairsList, viewExecutionLog);
 			}
 		});
 
@@ -210,14 +211,47 @@ public class Home extends JFrame {
 		runGenerateKey.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				GenCryptoKey.run();
-				JLabel generatedKeyMessage = new JLabel("<html><b>Your keypair has been successfully generated!</b><br>Do you wish to view it now?</html>");
-				int confirmExportToFile = JOptionPane.showConfirmDialog(null, generatedKeyMessage, "Key generated",
-						JOptionPane.YES_NO_OPTION, 1,
-						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
-				if(confirmExportToFile == JOptionPane.YES_OPTION) {
-					new ViewGeneratedKeys(homeFrame);
-				}
+				final JOptionPane optionPane = new JOptionPane("Please wait...", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION,
+						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/loading.gif")), new Object[]{}, null);
+
+				final JDialog dialog = optionPane.createDialog(optionPane, "Generating new keypair");
+
+				new SwingWorker<Void, Void>() {
+
+					@Override
+					protected Void doInBackground() throws Exception {
+						// Background processing is done here
+						GenCryptoKey.run();
+						return null;
+					}
+
+					// this is called when background thread above has completed.
+					@Override
+					protected void done() {
+						dialog.dispose();
+					};
+				}.execute();
+
+				dialog.setVisible(true);
+
+
+
+				//				JLabel nameKeyMessage = new JLabel("<html><b>Your keypair has been successfully generated!</b><br>Please give it a descriptive name for future reference.</html>");
+				//				JLabel viewKeyMessage = new JLabel("<html>Do you wish to view it now?</html>");
+				//				JLabel exportKeyMessage = new JLabel("<html>Do you wish to export the generated keypair to a file?</html>");
+				//				int confirmExportToFile = JOptionPane.showConfirmDialog(null, generatedKeyMessage, "Key generated",
+				//						JOptionPane.YES_NO_OPTION, 1,
+				//						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
+				//				if(confirmExportToFile == JOptionPane.YES_OPTION) {
+				//					new ViewKeys(homeFrame);
+				//				} else {
+				//					confirmExportToFile = JOptionPane.showConfirmDialog(null, exportKeyMessage, "Key Export",
+				//							JOptionPane.YES_NO_OPTION, 1,
+				//							new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
+				//					if(confirmExportToFile == JOptionPane.YES_OPTION) {
+				//						ExportKey.exportToFileAsPlainText();
+				//					}
+				//				}
 			}
 		});
 
@@ -237,12 +271,22 @@ public class Home extends JFrame {
 		menuBar.add(viewMenu);
 
 		viewMenu.add(viewLastGeneratedKey);
-		viewLastGeneratedKey.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notesKey24px.png")));
+		viewLastGeneratedKey.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_3.png")));
 		viewLastGeneratedKey.setEnabled(false);
 		viewLastGeneratedKey.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new ViewGeneratedKeys(homeFrame);
+				new ViewKeys(homeFrame, null);
+			}
+		});
+
+		viewMenu.add(viewGeneratedKeypairsList);
+		viewGeneratedKeypairsList.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notesKey24px.png")));
+		viewGeneratedKeypairsList.setEnabled(false);
+		viewGeneratedKeypairsList.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ViewKeys.getGeneratedKeypairsList();
 			}
 		});
 
@@ -267,59 +311,32 @@ public class Home extends JFrame {
 		repaint();
 	}
 
-	// Internal class for dialogs that display messages to the user
-	class DialogPanel {
-		private final Dimension dialogSize = new Dimension(350, 100);
-		private JPanel dialogPanel = new JPanel();
+	public static String queryUserForKeypairDescription() {
+		JLabel generatedKeyMessage = new JLabel("<html><b>Your keypair has been successfully generated!</b><br>Please give it a descriptive name for future reference.</html>");
+		Object[] buttonOptions = { "View generated keypair", "Export keypair to file", "Done" };
+		ImageIcon generatedKeyIcon = new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png"));
+		String keypairDescription;
 
-		public DialogPanel() {
-			JButton buttonOk = new JButton("OK");
-			buttonOk.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					modalDialog.dispose();
-				}
-			});
-			dialogPanel.add(buttonOk);
-			dialogPanel.setPreferredSize(dialogSize);
+		JPanel panel = new JPanel();
+		panel.add(generatedKeyMessage);
+		JTextField keypairDescriptiontextField = new JTextField(30);
+		panel.add(keypairDescriptiontextField);
+
+		int result = JOptionPane.showOptionDialog(null, panel, "Key generated",
+				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+				generatedKeyIcon, buttonOptions, buttonOptions[2]);
+
+		// Setting the keypair description obtained from user input
+		keypairDescription = keypairDescriptiontextField.getText();
+
+		if (result == JOptionPane.YES_OPTION){ // View generated keypair
+			new ViewKeys(homeFrame, keypairDescriptiontextField.getText());
+		} else if(result == JOptionPane.NO_OPTION) { // Export keypair to file
+			ExportKey.exportToFileAsPlainText(GenCryptoKey.generatedKeypair);
 		}
 
-		public DialogPanel(JLabel dialogLabel, String newCustomButton) {
-			dialogPanel.add(dialogLabel);
-			JButton buttonOk = new JButton("OK");
-			JButton customButton = null;
-			if(!newCustomButton.isEmpty()){
-				customButton = new JButton(newCustomButton);
-				customButton.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent evt) {
-						PrintWriter exportedKeyFile = null;
-						try {
-							exportedKeyFile = new PrintWriter("/home/nicholas/testExportKey.txt");
-						}catch(FileNotFoundException fnfe) {
-							fnfe.printStackTrace();
-						}
-						exportedKeyFile.println(GenCryptoKey.getGeneratedKey());
-						exportedKeyFile.close();
-					}
-				});
-			}
-			buttonOk.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					modalDialog.dispose();
-				}
-			});
-			dialogPanel.add(buttonOk);
-			dialogPanel.add(customButton);
-			dialogPanel.setPreferredSize(dialogSize);
-		}
-
-		public JPanel getMainPanel() {
-			return dialogPanel;
-		}
+		return keypairDescription;
 	}
-
 	// Internal class used to set the logo image on the Home window
 	//@SuppressWarnings(value = { "serial" })
 	class ImagePanel extends JPanel {

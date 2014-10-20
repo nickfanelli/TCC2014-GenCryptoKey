@@ -26,7 +26,8 @@ public class Login extends JFrame{
 
 	public Login(JFrame homeFrame, final JMenuItem fileLoginMenu, final JMenuItem fileLogoutMenu, final JMenuItem editUserInfoMenu, final JMenuItem editSettingsMenu,
 			final JMenuItem runGenerateKeyMenu, final JMenuItem runGenerateKeyGraphicallyMenu,
-			final JMenuItem viewLastGeneratedKeyMenu, final JMenuItem viewExecutionLogMenu) {
+			final JMenuItem viewLastGeneratedKeyMenu, final JMenuItem viewGeneratedKeypairsList, final JMenuItem viewExecutionLogMenu) {
+
 		final JDialog loginFrame = new JDialog(homeFrame, "Login", true);
 		String[] loginLabels = {"Username: ", "Password: "};
 		int numLabels = loginLabels.length;
@@ -82,28 +83,30 @@ public class Login extends JFrame{
 					user.setBackupPasswordHash(userInputPasswordHash);
 
 					try {
-						if(UserDAO.getInstance().isRegistered(user)) {
+						if(UserDAO.isRegistered(user)) {
 							System.out.println("User successfully logged in.");
 							fileLoginMenu.setEnabled(false);
 							fileLogoutMenu.setEnabled(true);
 							editUserInfoMenu.setEnabled(true);
 							editSettingsMenu.setEnabled(true);
 							runGenerateKeyMenu.setEnabled(true);
+							viewLastGeneratedKeyMenu.setEnabled(true);
+							viewGeneratedKeypairsList.setEnabled(true);
 							// TODO Set to true once these functionalities are implemented.
 							runGenerateKeyGraphicallyMenu.setEnabled(false);
-							viewLastGeneratedKeyMenu.setEnabled(true);
 							viewExecutionLogMenu.setEnabled(false);
 							loginFrame.dispose();
-						}else if(UserDAO.getInstance().isLoggingInWithBackupPassword(user)){
+						}else if(UserDAO.isLoggingInWithBackupPassword(user)){
 							System.out.println("User successfully logged in.");
 							fileLoginMenu.setEnabled(false);
 							fileLogoutMenu.setEnabled(true);
 							editUserInfoMenu.setEnabled(true);
 							editSettingsMenu.setEnabled(true);
 							runGenerateKeyMenu.setEnabled(true);
+							viewLastGeneratedKeyMenu.setEnabled(true);
+							viewGeneratedKeypairsList.setEnabled(true);
 							// TODO Set to true once these functionalities are implemented.
 							runGenerateKeyGraphicallyMenu.setEnabled(false);
-							viewLastGeneratedKeyMenu.setEnabled(true);
 							viewExecutionLogMenu.setEnabled(false);
 							JOptionPane.showMessageDialog(null, "You logged in using your backup password, which has now been changed. It is recommended you now update your password.", "Backup login", JOptionPane.INFORMATION_MESSAGE);
 							loginFrame.dispose();
@@ -112,6 +115,7 @@ public class Login extends JFrame{
 							JOptionPane.showMessageDialog(null, "Username and/or password are incorrect.", "Invalid login", JOptionPane.ERROR_MESSAGE);
 						}
 					} catch (Exception e) {
+						e.printStackTrace();
 						JOptionPane.showMessageDialog(null, "An error occured trying to update your user information.", "Database error", JOptionPane.ERROR_MESSAGE);
 						System.out.println("Error loading user info from database: " + e.getMessage());
 					}
@@ -134,12 +138,12 @@ public class Login extends JFrame{
 				String newBackupPassword = pwManager.generateBackupPassword();
 
 				try {
-					registeredUser = UserDAO.getInstance().getUsers().get(0);
+					registeredUser = UserDAO.getUsers().get(0);
 					registeredUser.setBackupPassword(newBackupPassword);
 					registeredUser.setBackupPasswordHash(pwManager.calculateSha256HashString(newBackupPassword));
 
 					try{
-						if(UserDAO.getInstance().updateUser(registeredUser, true) == 1) {
+						if(UserDAO.updateUser(registeredUser, true) == 1) {
 							// Success updating the backup password -> send e-mail to user
 							pwManager.sendPasswordRecoveryEmail();
 							JOptionPane.showMessageDialog(null, "An e-mail has been sent to your registered e-mail address with\n password recovery instructions.", "Password recovery", JOptionPane.INFORMATION_MESSAGE);

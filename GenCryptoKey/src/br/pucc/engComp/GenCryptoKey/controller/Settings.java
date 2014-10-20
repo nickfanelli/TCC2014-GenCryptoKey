@@ -10,7 +10,6 @@ public class Settings {
 	private static double mutationRate = 0.015;
 	private static double percentageOfIndividualsToCross = 0.5;
 	private static int maxPopulationSize = 50; // per generation
-	private static int numOfFitIndividualsToStop = 1;
 	private static int maxGenerationsToStop = 2000;
 	private static boolean scheduledKeyGeneration = false;
 	private static int scheduledKeyGenerationTime = 0;
@@ -79,14 +78,6 @@ public class Settings {
 
 	public static void setMaxPopulationSize(int newMaxPopulationSize) {
 		maxPopulationSize = newMaxPopulationSize;
-	}
-
-	public static int getNumOfFitIndividualsToStop() {
-		return numOfFitIndividualsToStop;
-	}
-
-	public static void setNumOfFitIndividualsToStop(int newNumOfFitIndividualsToStop) {
-		numOfFitIndividualsToStop = newNumOfFitIndividualsToStop;
 	}
 
 	public static int getMaxGenerationsToStop() {

@@ -10,7 +10,6 @@ public class SettingsPOJO {
 	private double mutationRate;
 	private double percentageOfIndividualsToCross;
 	private int maxPopulationSize;
-	private int numOfFitIndividualsToStop;
 	private int maxGenerationsToStop;
 	private boolean scheduledKeyGeneration;
 	private int scheduledKeyGenerationTime;
@@ -18,8 +17,8 @@ public class SettingsPOJO {
 
 	public SettingsPOJO (int parameterID, int individualSize, int initPopulationSize, int crossoverPoints,
 			int mutationsPerIndividual, double mutationRate, double percentageOfIndividualsToCross,
-			int populationSize,	int fitIndividualsToStop, int generationsToStop,
-			boolean scheduledKeyGeneration,	int scheduledKeyGenerationTime, boolean writeLog){
+			int populationSize,	int generationsToStop, boolean scheduledKeyGeneration,
+			int scheduledKeyGenerationTime, boolean writeLog) {
 		setSettingsID(parameterID);
 		setIndividualSize(individualSize);
 		setInitialPopulationSize(initPopulationSize);
@@ -28,7 +27,6 @@ public class SettingsPOJO {
 		setMutationRate(mutationRate);
 		setPercentageOfIndividualsToCross(percentageOfIndividualsToCross);
 		setMaxPopulationSize(populationSize);
-		setNumOfFitIndividualsToStop(fitIndividualsToStop);
 		setMaxGenerationsToStop(generationsToStop);
 		setScheduledKeyGeneration(scheduledKeyGeneration);
 		setScheduledKeyGenerationTime(scheduledKeyGenerationTime);
@@ -99,14 +97,6 @@ public class SettingsPOJO {
 
 	public void setMaxPopulationSize(int newMaxPreservedIndividuals) {
 		maxPopulationSize = newMaxPreservedIndividuals;
-	}
-
-	public int getNumOfFitIndividualsToStop() {
-		return numOfFitIndividualsToStop;
-	}
-
-	public void setNumOfFitIndividualsToStop(int newNumOfFitIndividualsToStop) {
-		numOfFitIndividualsToStop = newNumOfFitIndividualsToStop;
 	}
 
 	public int getMaxGenerationsToStop() {

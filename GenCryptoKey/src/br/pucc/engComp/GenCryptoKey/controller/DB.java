@@ -12,17 +12,8 @@ import java.util.List;
 public class DB {
 
 	private static Connection conn = null;
-	// For convenience, using ArrayList to store statements in use to facilitate resource releasing after usage.
-	private List<PreparedStatement> prepStatementsInUse = new ArrayList<PreparedStatement>(); // list of PreparedStatements in use
-	// The ResultSet rs and PreparedStatement psUpdate must be of
-	// static type to be used further down by the static block
-	// that creates the database upon class instantiation
-	private static ResultSet rs = null;
-	private static PreparedStatement psUpdate = null;
-	private PreparedStatement psSelect = null;
 
-	// TODO: Transformar em singleton. Ver codigo abaixo
-	// private DB() {}
+	private DB() {}
 
 	public static Connection getConnection() {
 		if (conn == null) {
@@ -37,45 +28,13 @@ public class DB {
 		return conn;
 	}
 
-	// Executes INSERT, UPDATE and DELETE commands
-	public int execCommand(String sqlCmd) throws Exception {
-		psUpdate = conn.prepareStatement(sqlCmd);
-		return psUpdate.executeUpdate();
-	}
-
-	// Executes SELECT commands (queries)
-	public ResultSet execQuery(String sqlQuery) throws Exception {
-		psSelect = conn.prepareStatement(sqlQuery);
-		return psSelect.executeQuery();
+	// Returns a preparedStatement object to the DAO that requested
+	public static PreparedStatement getPreparedStatement(String sqlQuery) throws SQLException {
+		return getConnection().prepareStatement(sqlQuery);
 	}
 
 	// Releases all open resources to avoid unnecessary memory usage
 	public void closeConnection() throws Exception {
-		// Close ResultSet
-		try{
-			if(rs != null){
-				rs.close();
-				rs = null;
-			}
-		}catch(SQLException sqle){
-			printSQLException(sqle);
-		}
-
-		// Close the PreparedStatements
-		int i = 0;
-		while (!prepStatementsInUse.isEmpty()) {
-			// PreparedStatement extend Statement
-			PreparedStatement prepSt = prepStatementsInUse.remove(i);
-			try {
-				if (prepSt != null) {
-					prepSt.close();
-					prepSt = null;
-				}
-			} catch (SQLException sqle) {
-				printSQLException(sqle);
-			}
-		}
-
 		// Close the Connection
 		try {
 			if (conn != null) {
@@ -85,7 +44,6 @@ public class DB {
 		} catch (SQLException sqle) {
 			printSQLException(sqle);
 		}
-
 	}
 
 	/** ## Method copied from Derby's SimpleApp demo include in installation package##
@@ -148,12 +106,15 @@ public class DB {
 
 		Pair<String, String> settingsTable = new Pair<String, String>();
 		settingsTable.setFirst("GASETTINGS");
-		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONSPERINDIVIDUAL int, MUTATIONRATE float, PERCENTAGEOFINDIVIDUALSTOCROSS double, MAXIMUMPOPULATIONSIZE int, FITINDIVIDUALSTOSTOP int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
+		settingsTable.setSecond("create table GASETTINGS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, POPULATIONSIZE int, CROSSOVERPOINTS int, MUTATIONSPERINDIVIDUAL int, MUTATIONRATE float, PERCENTAGEOFINDIVIDUALSTOCROSS double, MAXIMUMPOPULATIONSIZE int, GENERATIONSTOSTOP int, SCHEDULEDKEYGENERATION boolean, SCHEDULEDKEYGENERATIONTIME int, WRITELOG boolean, primary key(ID))");
 
 		Pair<String, String> generatedKeysTable = new Pair<String, String>();
 		generatedKeysTable.setFirst("GENERATEDKEYS");
-		generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(512), PUBLICEXPONENT varchar(5), PRIVATEEXPONENT varchar(3072), MODULUS (3072), GENERATIONTIMESTAMP timestamp, primary key(ID))");
+		generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(3072), PUBLICEXPONENT varchar(5), PRIVATEEXPONENT varchar(3072), MODULUS varchar(3072), KEYPAIRDESCRIPTION varchar(50), GENERATIONTIMESTAMP timestamp, primary key(ID))");
 
+		Pair<String, String> pastGenerationsTable = new Pair<String, String>();
+		pastGenerationsTable.setFirst("PASTGENERATIONS");
+		pastGenerationsTable.setSecond("create table PASTGENERATIONS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, INDIVIDUALPUBEXP varchar(5), INDIVIDUALPRIVEXP varchar(3072), PRIVATEEXPONENT varchar(3072), GENERATIONIDENTIFIER timestamp, primary key(ID))");
 
 		tables.add(userInfoTable);
 		tables.add(settingsTable);
@@ -162,12 +123,14 @@ public class DB {
 		try {
 			DatabaseMetaData dbmd = conn.getMetaData();
 			for (Pair<String, String> table : tables) {
-				rs = dbmd.getTables(null, null, table.getFirst(), null);
+				ResultSet rs = dbmd.getTables(null, null, table.getFirst(), null);
 				if (!rs.next()) {
-					psUpdate = conn.prepareStatement(table.getSecond());
+					PreparedStatement psUpdate = conn.prepareStatement(table.getSecond());
 					if (psUpdate.executeUpdate() == -1)
 						throw new Exception("Failed to create table " + table.getFirst());
+					psUpdate.close();
 				}
+				rs.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

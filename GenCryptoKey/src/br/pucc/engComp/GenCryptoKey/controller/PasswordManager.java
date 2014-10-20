@@ -76,7 +76,7 @@ public class PasswordManager {
 				try{
 					// Recover user's backup password from database to send through e-mail
 					String userFirstName = null, userEmail = null, userBackupPassword = null;
-					ArrayList<UserPOJO> registeredUser = UserDAO.getInstance().getUsers();
+					ArrayList<UserPOJO> registeredUser = UserDAO.getUsers();
 
 					if(registeredUser != null && !registeredUser.isEmpty()) {
 						userFirstName = registeredUser.get(0).getFirstName();

@@ -1,13 +1,16 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
+import br.pucc.engComp.GenCryptoKey.models.KeypairDAO;
 import br.pucc.engComp.GenCryptoKey.models.SettingsDAO;
+import br.pucc.engComp.GenCryptoKey.views.Home;
 
 public final class GenCryptoKey {
 
-	private static String generatedKey = null;
-	public static RSA rsa;
+	public static RSAKeypair rsaKeypair;
+	public static KeypairPOJO generatedKeypair;
 
 	public GenCryptoKey(){}
 
@@ -18,7 +21,7 @@ public final class GenCryptoKey {
 		// If there are saved settings on DB, populate them
 		ArrayList<SettingsPOJO> previousSettings = null;
 		try {
-			previousSettings = SettingsDAO.getInstance().getSettings();
+			previousSettings = SettingsDAO.getAllSettingsProfiles();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -31,7 +34,6 @@ public final class GenCryptoKey {
 			Settings.setMutationRate(previousSettings.get(previousSettings.size()-1).getMutationRate());
 			Settings.setPercentageOfIndividualsToCross(previousSettings.get(previousSettings.size()-1).getPercentageOfIndividualsToCross());
 			Settings.setMaxPopulationSize(previousSettings.get(previousSettings.size()-1).getMaxPopulationSize());
-			Settings.setNumOfFitIndividualsToStop(previousSettings.get(previousSettings.size()-1).getNumOfFitIndividualsToStop());
 			Settings.setMaxGenerationsToStop(previousSettings.get(previousSettings.size()-1).getMaxGenerationsToStop());
 			Settings.setScheduledKeyGeneration(previousSettings.get(previousSettings.size()-1).isScheduledKeyGeneration());
 			Settings.setScheduledKeyGenerationTime(previousSettings.get(previousSettings.size()-1).getScheduledKeyGenerationTime());
@@ -45,7 +47,6 @@ public final class GenCryptoKey {
 		System.out.println("mutationRate = " + Settings.getMutationRate());
 		System.out.println("percentageOfIndividualsToCross = " + Settings.getPercentageOfIndividualsToCross());
 		System.out.println("maxPopulationSize = " + Settings.getMaxPopulationSize());
-		System.out.println("numOfFitIndividualsToStop = " + Settings.getNumOfFitIndividualsToStop());
 		System.out.println("maxGenerationsToStop = " + Settings.getMaxGenerationsToStop());
 		//		System.out.println("scheduledKeyGeneration = " + Settings.isScheduledKeyGeneration());
 		//		System.out.println("scheduledKeyGenerationTime = " + Settings.getScheduledKeyGenerationTime());
@@ -62,7 +63,7 @@ public final class GenCryptoKey {
 		GeneticAlgorithm.rankSelection(myPop);
 		// FIXME: dynamically assign maximum generations from the Settings value -> Settings.getMaxGenerationsToStop()
 
-		while (generationCount <= 3) {
+		while (generationCount <= 1) {
 			System.out.println("######################################## GENERATION #: " + generationCount + " #####################################################");
 			System.out.println("######################################## GENERATION #: " + generationCount + " #####################################################");
 			GeneticAlgorithm.evolvePopulation(myPop);
@@ -70,18 +71,33 @@ public final class GenCryptoKey {
 		}
 
 		// Generate key pair using the fittest individual as base
-		rsa = new RSA(myPop.getIndividual(0));
-		rsa.generateKeyPair();
-		// TODO: add the generated keypair to the database
-		rsa.printExample();
+		rsaKeypair = new RSAKeypair(myPop.getIndividual(0));
+		rsaKeypair.generateKeyPair();
+
+		generatedKeypair = new KeypairPOJO();
+		generatedKeypair.setGeneratedKeyBase64(RSAKeypair.toBase64(rsaKeypair));// FIXME: convert to PEM specification
+		generatedKeypair.setPublicExponent(rsaKeypair.getE().toString());
+		generatedKeypair.setPrivateExponent(rsaKeypair.getD().toString());
+		generatedKeypair.setModulus(rsaKeypair.getN().toString());
+		// Keypair description is set from user input off of the message dialog
+		generatedKeypair.setKeypairDescription(Home.queryUserForKeypairDescription());
+		generatedKeypair.setGenerationTimestamp(Calendar.getInstance());
+
+		try {
+			if(KeypairDAO.newKeypair(generatedKeypair) != -1) {
+				//JOptionPane.showMessageDialog(null, "New keypair registered.", "Keypair registered", JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("New keypair registered.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error inserting keypair to database: " + e.getMessage());
+		}
+
+		rsaKeypair.printExample();
 	}
 
 	public static void runGraphically() {
 		// TODO Run graphical execution where user
 		// can follow the whole key generation process
-	}
-
-	public static String getGeneratedKey() {
-		return generatedKey;
 	}
 }

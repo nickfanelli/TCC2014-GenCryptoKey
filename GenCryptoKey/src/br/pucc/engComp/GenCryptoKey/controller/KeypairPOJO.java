@@ -1,5 +1,9 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class KeypairPOJO {
@@ -9,15 +13,17 @@ public class KeypairPOJO {
 	private String publicExponent;
 	private String privateExponent;
 	private String modulus;
-	private String generationTimestamp;
+	private String keypairDescription;
+	private Calendar generationTimestamp;
 
-	public KeypairPOJO (int keypairID, String generatedKey, String publicExponent, String privateExponent, String modulus, String generationTime){
+	public KeypairPOJO (int keypairID, String generatedKey, String publicExponent, String privateExponent, String modulus, String keypairDescription, Calendar generationTimestamp){
 		setKeypairID(keypairID);
 		setGeneratedKeyBase64(generatedKey);
 		setPublicExponent(publicExponent);
 		setPrivateExponent(privateExponent);
 		setModulus(modulus);
-		setGenerationTimestamp(generationTime);
+		setKeypairDescription(keypairDescription);
+		setGenerationTimestamp(generationTimestamp);
 	}
 
 	public KeypairPOJO (){}
@@ -64,11 +70,24 @@ public class KeypairPOJO {
 		this.modulus = modulus;
 	}
 
-	public String getGenerationTimestamp() {
-		return generationTimestamp;
+	public String getGenerationTimestampAsString() {
+		// returns timestamp in the format 10/19/2014 04:17:53
+		return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(generationTimestamp.getTime());
 	}
 
-	public void setGenerationTimestamp(String generationTime) {
+	public Timestamp getGenerationTimestamp() {
+		return new Timestamp(generationTimestamp.getTimeInMillis());
+	}
+
+	public void setGenerationTimestamp(Calendar generationTime) {
 		generationTimestamp = generationTime;
-	};
+	}
+
+	public String getKeypairDescription() {
+		return keypairDescription;
+	}
+
+	public void setKeypairDescription(String description) {
+		keypairDescription = description;
+	}
 }

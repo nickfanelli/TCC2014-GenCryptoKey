@@ -8,54 +8,24 @@ import java.util.ArrayList;
 
 public class SettingsDAO {
 
-	private DB db;
-	private static SettingsDAO instance;
-
-	// Obtaining connection to the database using Singleton
-	public static SettingsDAO getInstance() {
-		if(instance == null) {
-			try{
-				DB db = new DB();
-				instance = new SettingsDAO(db);
-			}catch(Exception e){
-				e.printStackTrace();
-				return null;
-			}
-		}
-		return instance;
-	}
-
-	public SettingsDAO (DB db) throws Exception{
-		if(instance == null) {
-			instance = this;
-			if (db == null)
-				throw new Exception ("No access to the database.");
-			this.db = db;
-		} else {
-			System.out.println("There already is an existing instance! No cookies for you!");
-		}
-	}
+	private SettingsDAO(){}
 
 	// Check whether the desired setting exists and is registered on the database
-	public boolean isRegistered(int parameterID) throws Exception
-	{
-		String query;
+	public static boolean isRegistered(int parameterID) throws Exception {
 
-		query = "SELECT * FROM GASETTINGS WHERE ID =" +
-				parameterID;
+		PreparedStatement ps = DB.getPreparedStatement("SELECT * FROM GASETTINGS WHERE ID = ?");
+		ps.setInt(1, parameterID);
 
-		/*query = "SELECT COUNT(*) AS howMany " +
-	              "FROM GASETTINGS WHERE CODIGO=" +
-	              parameterID;*/
+		ResultSet rs = ps.executeQuery();
+		boolean ans = rs.first();
 
-		ResultSet rs = db.execQuery (query);
-
-		boolean res = rs.first();
 		rs.close();
-		return res;
+		ps.close();
+
+		return ans;
 	}
 
-	public void valideAttributes(SettingsPOJO parameter) throws Exception{
+	public static void valideAttributes(SettingsPOJO parameter) throws Exception {
 		if (parameter == null)
 			throw new Exception ("Parameter not given.");
 
@@ -64,90 +34,79 @@ public class SettingsDAO {
 	}
 
 	// Insert new parameter
-	public int newSettings(SettingsPOJO parameter) throws Exception{
+	public static int newSettings(SettingsPOJO parameter) throws Exception {
 
-		String sqlCmd;
+		PreparedStatement ps = DB.getPreparedStatement("INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, "
+				+ "CROSSOVERPOINTS, MUTATIONSPERINDIVIDUAL, MUTATIONRATE, PERCENTAGEOFINDIVIDUALSTOCROSS, "
+				+ "MAXIMUMPOPULATIONSIZE, GENERATIONSTOSTOP, SCHEDULEDKEYGENERATION, "
+				+ "SCHEDULEDKEYGENERATIONTIME, WRITELOG) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		sqlCmd = "INSERT INTO GASETTINGS (INDIVIDUALSIZE, POPULATIONSIZE, CROSSOVERPOINTS, MUTATIONSPERINDIVIDUAL, "
-				+ "MUTATIONRATE, PERCENTAGEOFINDIVIDUALSTOCROSS, MAXIMUMPOPULATIONSIZE, FITINDIVIDUALSTOSTOP, "
-				+ "GENERATIONSTOSTOP, SCHEDULEDKEYGENERATION, SCHEDULEDKEYGENERATIONTIME, WRITELOG) "
-				+ "VALUES (" +
-				parameter.getIndividualSize() + ", " +
-				parameter.getInitialPopulationSize() + ", " +
-				parameter.getNumOfCrossoverPoints() + ", " +
-				parameter.getNumOfMutationsPerIndividual() + ", " +
-				parameter.getMutationRate() + ", " +
-				parameter.getPercentageOfIndividualsToCross() + ", " +
-				parameter.getMaxPopulationSize() + ", " +
-				parameter.getNumOfFitIndividualsToStop() + ", " +
-				parameter.getMaxGenerationsToStop() + ", " +
-				parameter.isScheduledKeyGeneration() + ", " +
-				parameter.getScheduledKeyGenerationTime() + ", " +
-				parameter.isWriteLogActive()+ ")";
+		ps.setInt(1, parameter.getIndividualSize());
+		ps.setInt(2, parameter.getInitialPopulationSize());
+		ps.setInt(3, parameter.getNumOfCrossoverPoints());
+		ps.setInt(4, parameter.getNumOfMutationsPerIndividual());
+		ps.setDouble(5, parameter.getMutationRate());
+		ps.setDouble(6, parameter.getPercentageOfIndividualsToCross());
+		ps.setInt(7, parameter.getMaxPopulationSize());
+		ps.setInt(8, parameter.getMaxGenerationsToStop());
+		ps.setBoolean(9, parameter.isScheduledKeyGeneration());
+		ps.setInt(10, parameter.getScheduledKeyGenerationTime());
+		ps.setBoolean(11, parameter.isWriteLogActive());
 
-		try{
-			return db.execCommand(sqlCmd);
-		}catch(Exception e){
-			e.printStackTrace();
-			throw new Exception ("Error trying to insert Settings.");
-		}
+		int result = ps.executeUpdate();
 
+		ps.close();
+
+		return result;
 	}
 
 	// Remove parameter from database
-	public void deleteParameter(int parameterID) throws Exception{
+	public static void deleteParameter(int parameterID) throws Exception {
 		if (!isRegistered(parameterID))
 			throw new Exception ("Parameter not registered.");
 
-		String sqlCmd;
+		PreparedStatement ps = DB.getPreparedStatement("DELETE FROM GASETTINGS WHERE ID = ?");
+		ps.setInt(1, parameterID);
 
-		sqlCmd = "DELETE FROM GASETTINGS WHERE ID =" +
-				parameterID;
-
-		db.execCommand (sqlCmd);
+		ps.executeUpdate();
 	}
 
 	// Update parameter's personal information
-	public int updateParameter(SettingsPOJO parameter) throws Exception {
-		valideAttributes(parameter);;
-		String cmdSQL;
+	public static int updateParameter(SettingsPOJO parameter) throws Exception {
+		valideAttributes(parameter);
 
-		cmdSQL = "UPDATE GASETTINGS SET " +
-				"INDIVIDUALSIZE=" +
-				parameter.getIndividualSize() +
-				", POPULATIONSIZE=" +
-				parameter.getInitialPopulationSize() +
-				", CROSSOVERPOINTS=" +
-				parameter.getNumOfCrossoverPoints() +
-				", MUTATIONSPERINDIVIDUAL=" +
-				parameter.getNumOfMutationsPerIndividual() +
-				", MUTATIONRATE=" +
-				parameter.getMutationRate() +
-				", PERCENTAGEOFINDIVIDUALSTOCROSS=" +
-				parameter.getPercentageOfIndividualsToCross() +
-				", MAXIMUMPOPULATIONSIZE=" +
-				parameter.getMaxPopulationSize() +
-				", FITINDIVIDUALSTOSTOP=" +
-				parameter.getNumOfFitIndividualsToStop() +
-				", GENERATIONSTOSTOP=" +
-				parameter.getMaxGenerationsToStop() +
-				", SCHEDULEDKEYGENERATION=" +
-				parameter.isScheduledKeyGeneration() +
-				", SCHEDULEDKEYGENERATIONTIME=" +
-				parameter.getScheduledKeyGenerationTime() +
-				", WRITELOG=" +
-				parameter.isWriteLogActive() +
-				" WHERE ID=" + parameter.getSettingsID();
+		PreparedStatement ps = DB.getPreparedStatement("UPDATE GASETTINGS SET INDIVIDUALSIZE = ?,"
+				+ " POPULATIONSIZE = ?, CROSSOVERPOINTS = ?, MUTATIONSPERINDIVIDUAL = ?, MUTATIONRATE = ?,"
+				+ " PERCENTAGEOFINDIVIDUALSTOCROSS = ?, MAXIMUMPOPULATIONSIZE = ?,"
+				+ " GENERATIONSTOSTOP = ?, SCHEDULEDKEYGENERATION = ?, WRITELOG = ?,"
+				+ " WHERE ID = ?");
 
-		return db.execCommand(cmdSQL);
+		ps.setInt(1, parameter.getIndividualSize());
+		ps.setInt(2, parameter.getInitialPopulationSize());
+		ps.setInt(3, parameter.getNumOfCrossoverPoints());
+		ps.setInt(4, parameter.getNumOfMutationsPerIndividual());
+		ps.setDouble(5, parameter.getMutationRate());
+		ps.setDouble(6, parameter.getPercentageOfIndividualsToCross());
+		ps.setInt(7, parameter.getMaxPopulationSize());
+		ps.setInt(8, parameter.getMaxGenerationsToStop());
+		ps.setBoolean(9, parameter.isScheduledKeyGeneration());
+		ps.setInt(10, parameter.getScheduledKeyGenerationTime());
+		ps.setBoolean(11, parameter.isWriteLogActive());
+
+		int result = ps.executeUpdate();
+
+		ps.close();
+
+		return result;
 	}
 
-	public SettingsPOJO getParameter(int parameterID) throws Exception{
-		String query;
+	public static SettingsPOJO getSettingsProfileByID(int settingsProfileID) throws Exception {
 
-		query = "SELECT * FROM GASETTINGS WHERE ID=" + parameterID;
+		PreparedStatement ps = DB.getPreparedStatement("SELECT * FROM GASETTINGS WHERE ID = ?");
+		ps.setInt(1, settingsProfileID);
 
-		ResultSet rs = db.execQuery (query);
+		ResultSet rs = ps.executeQuery();
 
 		if (!rs.first())
 			throw new Exception ("Parameter not registered.");
@@ -161,24 +120,24 @@ public class SettingsDAO {
 				rs.getDouble("MUTATIONRATE"),
 				rs.getDouble("PERCENTAGEOFINDIVIDUALSTOCROSS"),
 				rs.getInt("MAXIMUMPOPULATIONSIZE"),
-				rs.getInt("FITINDIVIDUALSTOSTOP"),
 				rs.getInt("GENERATIONSTOSTOP"),
 				rs.getBoolean("SCHEDULEDKEYGENERATION"),
 				rs.getInt("SCHEDULEDKEYGENERATIONTIME"),
 				rs.getBoolean("WRITELOG"));
 
 		rs.close();
+		ps.close();
+
 		return parameter;
 	}
 
-	public ArrayList<SettingsPOJO> getSettings() throws Exception{
-		String query;
+	public static ArrayList<SettingsPOJO> getAllSettingsProfiles() throws Exception {
 		ArrayList<SettingsPOJO> settingsList = null;
-		query = "SELECT * FROM GASETTINGS";
 
-		ResultSet rs = db.execQuery (query);
+		PreparedStatement ps = DB.getPreparedStatement("SELECT * FROM GASETTINGS");
+		ResultSet rs = ps.executeQuery();
 
-		if(rs != null){
+		if(rs != null) {
 			settingsList = new ArrayList<SettingsPOJO>();
 			SettingsPOJO settings = null;
 
@@ -193,7 +152,6 @@ public class SettingsDAO {
 				settings.setMutationRate(rs.getDouble("MUTATIONRATE"));
 				settings.setPercentageOfIndividualsToCross(rs.getDouble("PERCENTAGEOFINDIVIDUALSTOCROSS"));
 				settings.setMaxPopulationSize(rs.getInt("MAXIMUMPOPULATIONSIZE"));
-				settings.setNumOfFitIndividualsToStop(rs.getInt("FITINDIVIDUALSTOSTOP"));
 				settings.setMaxGenerationsToStop(rs.getInt("GENERATIONSTOSTOP"));
 				settings.setScheduledKeyGeneration(rs.getBoolean("SCHEDULEDKEYGENERATION"));
 				settings.setScheduledKeyGenerationTime(rs.getInt("SCHEDULEDKEYGENERATIONTIME"));
@@ -202,6 +160,7 @@ public class SettingsDAO {
 				settingsList.add(settings);
 			}
 			rs.close();
+			ps.close();
 		}
 		return settingsList;
 	}
