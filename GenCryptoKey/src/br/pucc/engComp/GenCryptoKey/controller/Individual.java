@@ -103,6 +103,10 @@ public class Individual implements Comparable<Individual>{
 		return getN().toString(2);
 	}
 
+	public int lengthInBits() {
+		return getN().toString(2).length();
+	}
+
 	@Override
 	public int compareTo(Individual target) {
 		// natural order for Individual's fitness is from smallest fitness value to largest fitness values

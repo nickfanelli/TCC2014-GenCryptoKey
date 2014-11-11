@@ -1,9 +1,11 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -59,6 +61,19 @@ public class ExportKey {
 			}
 		}
 		return exportResult;
+	}
+
+	protected static void exportBinaryIndividualForEvaluation(String binaryIndividual) {
+		PrintWriter pWriter;
+		try {
+			pWriter = new PrintWriter(new BufferedWriter(new FileWriter(System.getProperty("user.home") + "\\" + binaryIndividual.length() + "_bit_keys", true)));
+			//			pWriter = new PrintWriter(new java.io.File(System.getProperty("user.home") + "\\" + binaryIndividual.length() + "_" + Calendar.getInstance().getTimeInMillis()));
+			pWriter.println(binaryIndividual);
+			pWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
 

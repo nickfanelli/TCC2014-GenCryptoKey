@@ -12,7 +12,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -26,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 import java.net.URL;
 
@@ -215,6 +215,7 @@ public class Home extends JFrame {
 						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/loading.gif")), new Object[]{}, null);
 
 				final JDialog dialog = optionPane.createDialog(optionPane, "Generating new keypair");
+				dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 				new SwingWorker<Void, Void>() {
 
@@ -232,26 +233,8 @@ public class Home extends JFrame {
 					};
 				}.execute();
 
+				dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 				dialog.setVisible(true);
-
-
-
-				//				JLabel nameKeyMessage = new JLabel("<html><b>Your keypair has been successfully generated!</b><br>Please give it a descriptive name for future reference.</html>");
-				//				JLabel viewKeyMessage = new JLabel("<html>Do you wish to view it now?</html>");
-				//				JLabel exportKeyMessage = new JLabel("<html>Do you wish to export the generated keypair to a file?</html>");
-				//				int confirmExportToFile = JOptionPane.showConfirmDialog(null, generatedKeyMessage, "Key generated",
-				//						JOptionPane.YES_NO_OPTION, 1,
-				//						new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
-				//				if(confirmExportToFile == JOptionPane.YES_OPTION) {
-				//					new ViewKeys(homeFrame);
-				//				} else {
-				//					confirmExportToFile = JOptionPane.showConfirmDialog(null, exportKeyMessage, "Key Export",
-				//							JOptionPane.YES_NO_OPTION, 1,
-				//							new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
-				//					if(confirmExportToFile == JOptionPane.YES_OPTION) {
-				//						ExportKey.exportToFileAsPlainText();
-				//					}
-				//				}
 			}
 		});
 
@@ -337,6 +320,7 @@ public class Home extends JFrame {
 
 		return keypairDescription;
 	}
+
 	// Internal class used to set the logo image on the Home window
 	//@SuppressWarnings(value = { "serial" })
 	class ImagePanel extends JPanel {
