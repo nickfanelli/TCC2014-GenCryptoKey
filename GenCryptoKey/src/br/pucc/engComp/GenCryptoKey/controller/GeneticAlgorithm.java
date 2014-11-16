@@ -1,6 +1,5 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
-import java.security.SecureRandom;
 import java.util.HashMap;
 
 public class GeneticAlgorithm {
@@ -10,21 +9,31 @@ public class GeneticAlgorithm {
 		long tInicial = System.currentTimeMillis();
 
 		// Creation of new individuals through crossover using the current population
+		//		System.out.println("[LOG - DEBUG] -- Crossover starting!");
 		crossover(pop);
+		//		System.out.println("[LOG - DEBUG] -- Crossover ended!");
 		long tCrossEn = System.currentTimeMillis();
 
 		// Mutation
+		//		System.out.println("[LOG - DEBUG] -- Mutation starting!");
+		//		System.out.println("[LOG - DEBUG] -- pop.getSize() = " + pop.getSize());
 		for (int i = 0; i < pop.getSize(); i++) {
 			mutate(pop.getIndividual(i));
+			//			System.out.println("[LOG - DEBUG] -- Mutação iteração: " + i);
 		}
+		//		System.out.println("[LOG - DEBUG] -- Mutation ended!");
 		long tMutateEn = System.currentTimeMillis();
 
-		// Calculate fitness values for population's individuals
+		// Calculate fitness values for population's individual
+		//		System.out.println("[LOG - DEBUG] -- Fitness starting!");
 		evaluateFitness(pop);
+		//		System.out.println("[LOG - DEBUG] -- Fitness ended!");
 		long tEvEnd = System.currentTimeMillis();
 
 		// Selection of current fittest individuals
+		//		System.out.println("[LOG - DEBUG] -- Rank starting!");
 		rankSelection(pop);
+		//		System.out.println("[LOG - DEBUG] -- Rank ended");
 		long tRankEn = System.currentTimeMillis();
 
 		long tElapsed = tRankEn - tInicial;
@@ -33,10 +42,10 @@ public class GeneticAlgorithm {
 		long durEvalua = tEvEnd - tMutateEn;
 		long durRank = tRankEn - tEvEnd;
 
-		System.out.println("Crossover duration: " + durCross/(double)tElapsed + "%");
-		System.out.println("Mutation duration: " + durMutate/(double)tElapsed + "%");
-		System.out.println("Evaluation duration: " + durEvalua/(double)tElapsed + "%");
-		System.out.println("Ranking duration: " + durRank/(double)tElapsed + "%");
+		System.out.println("[LOG - DEBUG] -- Crossover duration: " + durCross/(double)tElapsed + "%");
+		System.out.println("[LOG - DEBUG] -- Mutation duration: " + durMutate/(double)tElapsed + "%");
+		System.out.println("[LOG - DEBUG] -- Evaluation duration: " + durEvalua/(double)tElapsed + "%");
+		System.out.println("[LOG - DEBUG] -- Ranking duration: " + durRank/(double)tElapsed + "%");
 	}
 
 	/**
@@ -122,31 +131,43 @@ public class GeneticAlgorithm {
 	 * @param pop population over which the crossover operation is going to occur.
 	 */
 	private static void crossover(Population pop) {
-		SecureRandom secRand = new SecureRandom();
+		//SecureRandom secRand = new SecureRandom();
+		int auxPopSize = pop.getSize(); // Store the original population size
+		double numOfIndividualsToCrossover = auxPopSize * Settings.getPercentageOfIndividualsToCross();
+
+		//		try {
+		//			System.out.println("pop.getSize(): " + auxPopSize);
+		//			System.out.println("Settings.getPercentageOfIndividualsToCross(): " + Settings.getPercentageOfIndividualsToCross());
+		//			System.out.println("Conta deu: " + auxPopSize * Settings.getPercentageOfIndividualsToCross());
+		//			System.out.println("Total de iterações a fazer: " + (auxPopSize * Settings.getPercentageOfIndividualsToCross()) * (pop.getSize() * Settings.getPercentageOfIndividualsToCross()));
+		//			Thread.sleep(4000);
+		//		} catch (InterruptedException e) {
+		//			e.printStackTrace();
+		//		}
+
 		// Loop through all individuals' applying the crossover to generate new individuals
-		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O(n^2)
-		for(int i = 0; i < Settings.getMaxPopulationSize() * Settings.getPercentageOfIndividualsToCross(); ++i) {
-			for(int j = i+1; j < Settings.getMaxPopulationSize() * Settings.getPercentageOfIndividualsToCross(); ++j) {
+		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O((n^2)/2)
+		for(int i = 0; i < numOfIndividualsToCrossover; ++i) {
+			for(int j = i+1; j < numOfIndividualsToCrossover; ++j) {
 				// There is no need to choose a random crossover point, since
 				// the individual only has 2 genes to work with (p, q)
-				Individual ind1 = pop.newIndividual(secRand);
-				//				try {
-				//					Thread.sleep(200);
-				//				} catch (InterruptedException e) {
-				//					e.printStackTrace();
-				//				}
-				Individual ind2 = pop.newIndividual(secRand);
+				Individual ind1 = pop.newIndividual();
+				Individual ind2 = pop.newIndividual();
 
 				// Population example: I1: {p1, q1} ; I2: {p2, q2} ; I3: {p3, q3} ; ... ; In: {pn, qn}
 				// Offspring after crossover of I1 and I2:
 				// C1: {p1, q2}; C2: {p2, q1}
-				// TODO: It is possible to generate 2 more individuals in the offspring: C3: {p1, p2}; C4: {q1, q2}
-
+				// TODO: It is possible to generate 6 more individuals in the offspring: C3: {p1, p2}; C4: {q1, p2} C5:{q1, q2}; C6:{p2, p1}; C7:{q2, p1} C8:{q2, q1}
+				// Total possible number of combination is = (number of genes between both parents)^(genes per individual)/2 ==> (4^2)/2
+				// Observation.: The result is divided by 2 because an individual can't be formed with twice the same gene from a single parent, otherwise individuals that didn't go
+				// through the crossover operation would be allowed.
 				ind1.setP(pop.getIndividual(i).getP());
 				ind1.setQ(pop.getIndividual(j).getQ());
 
 				ind2.setP(pop.getIndividual(j).getP());
-				ind2.setP(pop.getIndividual(i).getQ());
+				ind2.setQ(pop.getIndividual(i).getQ());
+
+				//				System.out.println("[LOG - DEBUG] -- crossover is alive | i = " + i + " | j = " + j);
 			}
 		}
 	}

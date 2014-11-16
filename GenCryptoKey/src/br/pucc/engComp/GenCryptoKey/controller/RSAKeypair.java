@@ -29,35 +29,41 @@ public class RSAKeypair {
 		//System.out.println("myD: " + getD());
 	}
 
-	private void testMessageLength(String testString, BigInteger exp1, BigInteger exp2, BigInteger n) {
+	private void exchangeMessageExample(String testString, BigInteger exp1, BigInteger exp2, BigInteger n) {
 		String base64String = new String(Base64.encodeBase64(testString.getBytes()));
 
 		if(n.compareTo(new BigInteger(base64String.getBytes())) <= 0) {
-			System.out.println("Data is too big to be encrypted with this key.");
+			System.out.println("[LOG - ERROR] -- Data is too big to be encrypted with this key.");
 			return;
 		}
 
-		System.out.println("Encoded String in Base64: " + base64String);
+		System.out.println("[LOG - DEBUG] -- \t\tEncoded String in Base64: " + base64String);
 
 		BigInteger encr = new BigInteger(base64String.getBytes()).modPow(exp2, n);
-		System.out.println("Cyphertext in Base64: " + Base64.encodeBase64String(encr.toByteArray()));
+		System.out.println("[LOG - DEBUG] -- \t\tCyphertext in Base64: " + Base64.encodeBase64String(encr.toByteArray()));
 
 		BigInteger decr = encr.modPow(exp1, n);
-		System.out.println("Decrypted cyphertext: " + new String(decr.toByteArray()));
-		System.out.println("Decoding " + new String(decr.toByteArray()) + "  ===>  " + new String(Base64.decodeBase64(decr.toByteArray())));
+		System.out.println("[LOG - DEBUG] -- \t\tDecrypted cyphertext: " + new String(decr.toByteArray()));
+		System.out.println("[LOG - DEBUG] -- \t\tDecoding " + new String(decr.toByteArray()) + "  ===>  " + new String(Base64.decodeBase64(decr.toByteArray())));
 	}
 
 	public void printExample() {
-		System.out.println("ENCRYPTING with the PUBLIC key and DECRYPTING with the PRIVATE key");
-		testMessageLength("Oi, Tobar!", getE(), getD(), getN());
+		System.out.println("[LOG - DEBUG] -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ EXAMPLE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		System.out.println("[LOG - DEBUG] -- \tENCRYPTING with the PUBLIC key and DECRYPTING with the PRIVATE key");
+		exchangeMessageExample("Oi, Tobar!", getE(), getD(), getN());
 
-		System.out.println("ENCRYPTING with the PRIVATE key and DECRYPTING with the PUBLIC key");
-		testMessageLength("Olá, Nicholas!", getD(), getE(), getN());
+		System.out.println("[LOG - DEBUG] -- \tENCRYPTING with the PRIVATE key and DECRYPTING with the PUBLIC key");
+		exchangeMessageExample("Olá, Nicholas!", getD(), getE(), getN());
+		System.out.println("[LOG - DEBUG] -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	}
 
 	public static String toBase64(RSAKeypair rsaKey) {
 		StringBuilder rsaKeyBuilder = new StringBuilder();
 		String rsaKeyBase64;
+
+		//		System.out.println("[LOG - DEBUG] -- E length: " + rsaKey.getE().toString().length());
+		//		System.out.println("[LOG - DEBUG] -- D length: " + rsaKey.getD().toString().length());
+		//		System.out.println("[LOG - DEBUG] -- N length: " + rsaKey.getN().toString().length());
 
 		rsaKeyBuilder.append(rsaKey.getE().toString());
 		rsaKeyBuilder.append(rsaKey.getD().toString());
@@ -65,7 +71,10 @@ public class RSAKeypair {
 
 		rsaKeyBase64 = rsaKeyBuilder.toString();
 
-		return Base64.encodeBase64String(rsaKeyBase64.getBytes());
+		rsaKeyBase64 = Base64.encodeBase64String(rsaKeyBase64.getBytes());
+		//		System.out.println("[LOG - DEBUG] -- RSAKeyPair in base64: " + rsaKeyBase64);
+		//		System.out.println("[LOG - DEBUG] -- RSAKeyPair size in base64: " + rsaKeyBase64.length());
+		return rsaKeyBase64;
 	}
 
 	/* Getters & Setters */

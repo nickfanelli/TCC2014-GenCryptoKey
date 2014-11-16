@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,7 +17,7 @@ import br.pucc.engComp.GenCryptoKey.views.Home;
 
 public class ExportKey {
 
-	public static boolean exportToFileAsPlainText(KeypairPOJO keypairToExport) {
+	public static boolean exportToFileAsPlainText(KeypairPOJO keypairToExport, JDialog dialogToDisposeOf) {
 		boolean exportResult = false;
 
 		JLabel generatedKeyMessage = new JLabel("<html><b>Exporting your keypair to a file will increase the exposure of your keys.</br> Do you wish to proceed? </html>");
@@ -24,6 +26,11 @@ public class ExportKey {
 				new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/key24px_2.png")));
 
 		if(confirmExportToFile == JOptionPane.YES_OPTION) {
+
+			// Dispose of the window currently showing the keypair
+			if(dialogToDisposeOf != null) {
+				dialogToDisposeOf.dispose();
+			}
 
 			/** File chooser to set the directory for key exporting */
 			JFileChooser exportKeyDirectoryChooser = new JFileChooser();
@@ -55,6 +62,7 @@ public class ExportKey {
 					JOptionPane.showMessageDialog(null, "Your key pair has been exported.", "Keypair exported", JOptionPane.INFORMATION_MESSAGE);
 				}catch(FileNotFoundException fnfe) {
 					exportResult = false;
+					System.out.println("[LOG - ERROR] -- Error trying to export key file. There may not be enough disk space.");
 					fnfe.printStackTrace();
 				}
 

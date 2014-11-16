@@ -17,25 +17,43 @@ import java.util.ArrayList;
 public class Individual implements Comparable<Individual>{
 
 	private ArrayList<BigInteger> individual;
-	private BigInteger P;
-	private BigInteger Q;
-	private BigInteger E; // currently using E = 65537 (2^16 + 1)
-	private BigInteger N;
+	private BigInteger P = new BigInteger("0");
+	private BigInteger Q = new BigInteger("0");;
+	private BigInteger E = BigInteger.valueOf(65537); // currently using E = 65537 (2^16 + 1)
+	private BigInteger N = new BigInteger("0");;
 	private double fitnessValue = -1;
 
 	private final int KEY_SIZE_IN_BITS = Settings.getIndividualSize();
 
-	private Individual() {}
-
+	// Main constructor: used to create Individuals from scratch
 	public Individual(SecureRandom secRand) {
 		individual = new ArrayList<BigInteger>();
 		P = BigInteger.probablePrime(KEY_SIZE_IN_BITS / 2, secRand);
 		Q = BigInteger.probablePrime(KEY_SIZE_IN_BITS / 2, secRand);
-		E = BigInteger.valueOf(65537);
+		//        E = BigInteger.valueOf(65537);
 		N = P.multiply(Q);
 		individual.add(P);
 		individual.add(Q);
 		individual.add(E);
+	}
+
+	// Auxiliary constructor 1: used to create an Individual from crossover, where the data is obtained from the parents
+	public Individual() {
+		individual = new ArrayList<BigInteger>();
+		individual.add(new BigInteger("0"));
+		individual.add(new BigInteger("0"));
+		individual.add(E);
+	}
+
+	// Auxiliary constructor 2: used to reassemble an Individual whose data has been retrieved from database
+	public Individual(BigInteger newP, BigInteger newQ) {
+		individual = new ArrayList<BigInteger>();
+		individual.add(newP);
+		individual.add(newQ);
+		individual.add(E);
+		setP(newP);
+		setQ(newQ);
+		setE(E);
 	}
 
 	/* Getters & Setters */

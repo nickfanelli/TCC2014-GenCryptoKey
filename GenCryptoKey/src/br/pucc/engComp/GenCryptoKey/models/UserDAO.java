@@ -21,6 +21,7 @@ public class UserDAO {
 
 		ResultSet rs = ps.executeQuery();
 		boolean ans = rs.next();
+
 		rs.close();
 		ps.close();
 
@@ -167,7 +168,7 @@ public class UserDAO {
 				user.setFirstName(rs.getString("FIRSTNAME"));
 				user.setLastName(rs.getString("LASTNAME"));
 				String email = rs.getString("EMAIL");
-				System.out.println(email);
+				//                System.out.println("[LOG - DEBUG] -- User e-mail: " + email);
 				user.setEmail(email);
 				user.setUsername(rs.getString("USERNAME"));
 				user.setPassword(rs.getString("PASSWORD"));

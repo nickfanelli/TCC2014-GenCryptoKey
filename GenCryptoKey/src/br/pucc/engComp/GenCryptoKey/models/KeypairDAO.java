@@ -20,7 +20,6 @@ public class KeypairDAO {
         ps.setTimestamp(1, keypair.getGenerationTimestamp());
 
         ResultSet rs = ps.executeQuery();
-
         boolean ans = rs.next();
 
         rs.close();

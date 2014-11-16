@@ -90,13 +90,11 @@ public class GASettings extends JFrame {
 					@Override
 					public void keyTyped(KeyEvent arg0) {
 						// Auto-generated method stub
-
 					}
 
 					@Override
 					public void keyPressed(KeyEvent arg0) {
 						// Auto-generated method stub
-
 					}
 				});
 
@@ -376,10 +374,10 @@ public class GASettings extends JFrame {
 		springPanel.add(resetWriteLogButton);
 
 		// Formats the panel and creates the grid
-		// '+3' row is necessary for the writeLog, useKSTest and useChiSquareTest checkboxes.
-		// Schedule Key Generation will add 1 when implemented
+		// Number of lines = labels(sliders + text fields) + checkboxes.
+		// Schedule Key Generation will add 1 to checkboxes when implemented
 		SpringUtilities.makeCompactGrid(springPanel,
-				(numLabels + 3), 4, // lines, columns
+				(numLabels + settingsCheckboxes.size()), 4, // lines, columns
 				6, 6,        // initX, initY
 				6, 6);       // xPad, yPad
 
@@ -427,7 +425,7 @@ public class GASettings extends JFrame {
 						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage of individuals to cross\" must be numbers.");
 					}
 					if(finalMutationRateField != null && Double.parseDouble(finalMutationRateField.getText()) > 0 && Double.parseDouble(finalMutationRateField.getText()) <= 1
-							&& finalPercentIndividualsToCross != null && Double.parseDouble(finalPercentIndividualsToCross.getText()) > 0 && Double.parseDouble(finalPercentIndividualsToCross.getText()) <= 1) {
+							&& finalPercentIndividualsToCross != null && Double.parseDouble(finalPercentIndividualsToCross.getText()) >= 0.02 && Double.parseDouble(finalPercentIndividualsToCross.getText()) <= 1) {
 						newSettings.setIndividualSize(settingsSliders.get(0).getValue());
 						newSettings.setInitialPopulationSize(settingsSliders.get(1).getValue());
 						newSettings.setNumOfCrossoverPoints(settingsSliders.get(2).getValue());
@@ -456,11 +454,11 @@ public class GASettings extends JFrame {
 
 						// Save to database
 						if(SettingsDAO.newSettings(newSettings) != -1) {
-							System.out.println("New settings successfully saved to the database.");
+							System.out.println("[LOG - INFO] -- New settings successfully saved to the database.");
 							settingsFrame.dispose();
 						}
 					}else {
-						JOptionPane.showMessageDialog(null, "\"Mutation rate\" and \"Percentage individuals to cross\" must be positive values between 0 and 1.", "Illegal value", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, "<html>\"Mutation rate\" must be a <b>positive</b> value <b>between 0 and 1</b><br> and \"Percentage individuals to cross\" must be <b>positive</b> values <b>between 0.02 and 1</b>.</html>", "Illegal value", JOptionPane.ERROR_MESSAGE);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

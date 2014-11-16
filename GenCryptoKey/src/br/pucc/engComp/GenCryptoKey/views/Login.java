@@ -84,7 +84,7 @@ public class Login extends JFrame{
 
 					try {
 						if(UserDAO.isRegistered(user)) {
-							System.out.println("User successfully logged in.");
+							System.out.println("[LOG - INFO] -- User successfully logged in.");
 							fileLoginMenu.setEnabled(false);
 							fileLogoutMenu.setEnabled(true);
 							editUserInfoMenu.setEnabled(true);
@@ -97,7 +97,7 @@ public class Login extends JFrame{
 							viewExecutionLogMenu.setEnabled(false);
 							loginFrame.dispose();
 						}else if(UserDAO.isLoggingInWithBackupPassword(user)){
-							System.out.println("User successfully logged in.");
+							System.out.println("[LOG - INFO] -- User successfully logged in.");
 							fileLoginMenu.setEnabled(false);
 							fileLogoutMenu.setEnabled(true);
 							editUserInfoMenu.setEnabled(true);
@@ -117,7 +117,7 @@ public class Login extends JFrame{
 					} catch (Exception e) {
 						e.printStackTrace();
 						JOptionPane.showMessageDialog(null, "An error occured trying to update your user information.", "Database error", JOptionPane.ERROR_MESSAGE);
-						System.out.println("Error loading user info from database: " + e.getMessage());
+						System.out.println("[LOG - ERROR] -- Error loading user info from database: " + e.getMessage());
 					}
 				}
 			}
@@ -150,13 +150,13 @@ public class Login extends JFrame{
 						}
 					}catch (Exception e) {
 						JOptionPane.showMessageDialog(null, "An error occured trying to update your backup password.", "Database error", JOptionPane.ERROR_MESSAGE);
-						System.out.println("Error message: " + e.getMessage());
+						System.out.println("[LOG - ERROR] -- Error message: " + e.getMessage());
 						e.printStackTrace();
 					}
 
 				}catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "There is no registered user.", "Database error", JOptionPane.ERROR_MESSAGE);
-					System.out.println("Error message: " + e.getMessage());
+					System.out.println("[LOG - ERROR] -- Error message: " + e.getMessage());
 					e.printStackTrace();
 				}
 			}

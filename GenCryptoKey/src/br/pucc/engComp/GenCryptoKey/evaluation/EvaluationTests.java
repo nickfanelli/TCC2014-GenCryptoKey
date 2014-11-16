@@ -16,7 +16,7 @@ public final class EvaluationTests {
 	private EvaluationTests(){} // suppressing the class constructor
 
 	public static void Evaluate(int streamLength, int bitStreamsInFile) {
-		System.out.println("Running evaluation tests...");
+		System.out.println("[LOG - DEBUG] -- Running evaluation tests...\n");
 
 		try
 		{
@@ -67,30 +67,11 @@ public final class EvaluationTests {
 			printOutputStream.close();
 
 		} catch(IOException ioe){
-			System.out.println("Error during evaluation routine: " + ioe.getMessage());
+			System.out.println("[LOG - ERROR] -- Error during evaluation routine: " + ioe.getMessage());
 		} finally {
-			System.out.println("Evaluation complete!");
+			System.out.println("[LOG - DEBUG] -- Evaluation complete!");
 		}
 
 		return;
 	}
-
-	public static boolean Runs() {
-		boolean result = false;
-
-		return result;
-	}
-
-	public static boolean Serial() {
-		boolean result = false;
-
-		return result;
-	}
-
-	public static boolean LinearComplexity() {
-		boolean result = false;
-
-		return result;
-	}
-
 }

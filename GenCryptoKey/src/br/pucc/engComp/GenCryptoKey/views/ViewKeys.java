@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -107,7 +108,7 @@ public class ViewKeys extends JFrame {
 		exportKeyPairToFileButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				ExportKey.exportToFileAsPlainText(finalKeypair);
+				ExportKey.exportToFileAsPlainText(finalKeypair, viewGeneratedKeysFrame);
 			}
 		});
 
@@ -153,6 +154,7 @@ public class ViewKeys extends JFrame {
 		JMenuItem copyOption;
 		public PopUpMenu(){
 			copyOption = new JMenuItem("Copy");
+			copyOption.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/copy24px.png")));
 			add(copyOption);
 		}
 	}
@@ -255,7 +257,7 @@ public class ViewKeys extends JFrame {
 		exportKeypairButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				ExportKey.exportToFileAsPlainText(keypairs.get(keypairsTable.getSelectedRow()));
+				ExportKey.exportToFileAsPlainText(keypairs.get(keypairsTable.getSelectedRow()), null);
 			}
 		});
 
