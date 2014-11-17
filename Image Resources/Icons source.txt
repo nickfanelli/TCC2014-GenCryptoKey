@@ -17,3 +17,9 @@ Keywords:
  - close
  - question / help
  - info
+ - copy
+ - cut
+ - paste
+ - delete
+ - remove
+ - trash

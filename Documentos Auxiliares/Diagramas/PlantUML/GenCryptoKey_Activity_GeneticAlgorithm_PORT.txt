@@ -1,0 +1,51 @@
+@startuml
+title <b>Diagrama de Atividade</b> Algoritmo Genético do GenCryptoKey
+
+start
+
+while(Tamanho da população inicial alcançado?) is (Não)
+	:Gerar número provavelmente primo
+	de tamanho definido pelo usuário
+	para compor a população inicial;
+endwhile (Sim)
+
+while(Número de gerações definido pelo usuário foi alcançado?) is (Não)
+
+while(Todos os cruzamentos foram realizados?) is (Não)
+	:**//Crossover//**: seleciona número de pais definidos pelo usuário
+	e realiza operação para geração de prole;
+endwhile (Sim)
+
+while(Chance the mutação foi verificada em todos os genes 
+de todos os indivíduos?) is (Não)
+	:**Mutação**: verifica chance de mutação. Se positivo, gerar um
+	novo número provavelmente primo e substituir o gene;
+endwhile (Sim)
+
+partition **Cálculo_//Fitness//**_indivíduos { 
+	partition Testes_para_uniformidade {
+		:Aplicar testes de //gaps// ;
+		:Aplicar teste Kolmogorov-Smirnov  sobre
+		o result do teste de //gaps//;
+	}
+	partition Testes_para_frequência {
+		:Calcular entropia esperada;
+		:Calcular Entropia de Shannon do indivíduo;
+		:Calcular teste Qui-quadrado de Pearson sobre a 
+		Entropia de Shannon resultante;
+	}
+	
+	:Atribuir valor de fitness do indivíduo a partir da 
+	Norma Euclidiana entre os testes KS e Qui-quadrado;
+}
+
+
+:**Seleção**: selecionar o grupo de indivíduos com maior //fitness //
+de acordo com o tamanho de grupo definido pelo usuário para 
+evoluir para a próxima geração;
+
+endwhile (Sim)
+:Selecionar o indíviduo com maior //fitness//;
+
+stop
+@enduml

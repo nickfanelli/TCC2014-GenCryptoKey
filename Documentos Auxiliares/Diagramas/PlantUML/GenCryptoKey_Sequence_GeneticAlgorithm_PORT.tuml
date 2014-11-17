@@ -1,0 +1,25 @@
+@startuml
+title <b>Diagrama de Sequência</b> Algoritmo Genético do GenCryptoKey
+
+EvoluirPopulação -> Crossover: PopulaçãoInicial
+
+box "Algoritmo Genético" #LightBlue
+        participant Crossover
+        participant Mutação
+        participant Fitness
+        participant Seleção
+end box
+
+Crossover -> Mutação: Prole
+
+Mutação -> Fitness: Prole
+activate Fitness
+
+Fitness -> Seleção: Prole
+
+Fitness <- Seleção: IndivíduoMaisFit
+deactivate Fitness
+
+EvoluirPopulação <- Fitness: IndivíduoMaisFit
+
+@enduml
