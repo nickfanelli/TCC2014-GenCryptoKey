@@ -16,6 +16,7 @@ import java.util.Map.Entry;
  * @return observedCriticalD the largest absolute difference between theoretical and observed frequencies on the given set
  */
 public class KolmogorovSmirnovTest {
+	private static int sampleLength = Settings.getIndividualSize();
 
 	public static double calculateCriticalD(HashMap<Integer, Integer> gapLengthsMap, int stringLength, int gapsNumericBase) throws IllegalArgumentException {
 		if(stringLength < 1)
@@ -64,5 +65,22 @@ public class KolmogorovSmirnovTest {
 		gapLengthsMap.clear();
 
 		return observedCriticalD;
+	}
+
+	public static boolean isFailToRejectNullHypothesis(double observedD) {
+		boolean failsToReject = false;
+		// According to the Kolmogorov-Smirnov Tables, for sample lengths N > 40, which is the case in this program,
+		// the critical values for for alpha levels of significance 10%, 5%, 1% and 0.5% are, respectively, as follows:
+		// (1.22/(N^(0.5))), (1.36/(N^(0.5))), (1.51/(N^(0.5))) and (1.63/(N^(0.5))).
+
+		// Since the significance level being used is 5%, the observed D must be checked against the following
+
+		double criticalValueForAlpha = 1.36 / Math.pow(sampleLength, 0.5);
+
+		if (observedD < criticalValueForAlpha) {
+			failsToReject = true;
+		}
+
+		return failsToReject;
 	}
 }

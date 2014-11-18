@@ -3,14 +3,14 @@ package br.pucc.engComp.GenCryptoKey.controller;
 import org.apache.commons.math3.stat.inference.ChiSquareTest;
 
 public class PearsonsChiSquareTest {
-	private static double alphaConfidenceValue = 0.05;
-	private static double theoreticalChiSquareValueForAlpha = 0.00393; // degrees of freedom = 1 | p-value = 0.05 (5%)
+	private static double alphaSignificanceLevel = 0.05;
+	private static double theoreticalChiSquareValueForAlpha = 3.841; // degrees of freedom = 1 (it is the num. of classes - 1)
 
 	private PearsonsChiSquareTest(){} // suppressing the class constructor
 
 	public static boolean ChiSquare(double[] expectedFrequencies, long[] observedFrequencies) {
 		ChiSquareTest chiSq = new ChiSquareTest();
-		return chiSq.chiSquareTest(expectedFrequencies, observedFrequencies, alphaConfidenceValue);
+		return chiSq.chiSquareTest(expectedFrequencies, observedFrequencies, alphaSignificanceLevel);
 	}
 
 	public static double ChiSquare(long[] observedFrequencies, long[] expectedFrequencies) {

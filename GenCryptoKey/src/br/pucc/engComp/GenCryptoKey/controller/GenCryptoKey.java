@@ -112,7 +112,8 @@ public final class GenCryptoKey {
 			System.out.println("######################################## GENERATION #: " + generationCount + " #####################################################");
 			System.out.println("######################################## GENERATION #: " + generationCount + " #####################################################");
 			GeneticAlgorithm.evolvePopulation(myPop);
-		} while (generationCount < Settings.getMaxGenerationsToStop()); // FIXME: dynamically assign maximum generations from the Settings value -> Settings.getMaxGenerationsToStop()
+		} while (generationCount < Settings.getMaxGenerationsToStop()); // For testing and debugging reasons, this limit can be hard coded.
+																		// Otherwise, use -> Settings.getMaxGenerationsToStop()
 
 		System.out.println("[LOG - DEBUG] -- Evolved population up to: " + generationCount + " generations.");
 		System.out.println("[LOG - DEBUG] -- Run() duration: " + ((System.currentTimeMillis() - tInicial)/1000.00) + " s");
