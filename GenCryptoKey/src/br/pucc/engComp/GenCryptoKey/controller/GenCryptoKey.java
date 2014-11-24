@@ -105,7 +105,7 @@ public final class GenCryptoKey {
 		}
 
 		int generationCount = 0;
-		long tInicial = System.currentTimeMillis();
+		long initGATime = System.currentTimeMillis();
 		do {
 			System.out.println("Cheguei aqui 5 - entrei no loop");
 			generationCount++;
@@ -113,10 +113,10 @@ public final class GenCryptoKey {
 			System.out.println("######################################## GENERATION #: " + generationCount + " #####################################################");
 			GeneticAlgorithm.evolvePopulation(myPop);
 		} while (generationCount < Settings.getMaxGenerationsToStop()); // For testing and debugging reasons, this limit can be hard coded.
-																		// Otherwise, use -> Settings.getMaxGenerationsToStop()
-
+		// Otherwise, use -> Settings.getMaxGenerationsToStop()
+		long endGATime = System.currentTimeMillis();
 		System.out.println("[LOG - DEBUG] -- Evolved population up to: " + generationCount + " generations.");
-		System.out.println("[LOG - DEBUG] -- Run() duration: " + ((System.currentTimeMillis() - tInicial)/1000.00) + " s");
+		System.out.println("[LOG - DEBUG] -- Run() duration: " + ((endGATime - initGATime)/1000.00) + "s");
 
 		if(!autoEvaluatingKeys) { // Run this segment only when NOT executing the program for evaluation generated keys
 			// Save last generation to database

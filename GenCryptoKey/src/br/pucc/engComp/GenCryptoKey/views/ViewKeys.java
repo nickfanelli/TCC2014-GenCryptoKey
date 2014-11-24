@@ -144,7 +144,7 @@ public class ViewKeys extends JFrame {
 		viewGeneratedKeysFrame.setContentPane(parentPanel);
 		viewGeneratedKeysFrame.pack();
 		viewGeneratedKeysFrame.validate();
-		viewGeneratedKeysFrame.setResizable(false);
+		viewGeneratedKeysFrame.setResizable(true);
 		viewGeneratedKeysFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		viewGeneratedKeysFrame.setLocationRelativeTo(null);
 		viewGeneratedKeysFrame.setVisible(true);

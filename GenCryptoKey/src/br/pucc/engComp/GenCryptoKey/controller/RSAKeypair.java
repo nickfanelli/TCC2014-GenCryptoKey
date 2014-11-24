@@ -1,6 +1,7 @@
 package br.pucc.engComp.GenCryptoKey.controller;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -39,11 +40,13 @@ public class RSAKeypair {
 
 		System.out.println("[LOG - DEBUG] -- \t\tEncoded String in Base64: " + base64String);
 
-		BigInteger encr = new BigInteger(base64String.getBytes()).modPow(exp2, n);
+		BigInteger encr = new BigInteger(base64String.getBytes()).modPow(exp1, n);
 		System.out.println("[LOG - DEBUG] -- \t\tCyphertext in Base64: " + Base64.encodeBase64String(encr.toByteArray()));
 
-		BigInteger decr = encr.modPow(exp1, n);
-		System.out.println("[LOG - DEBUG] -- \t\tDecrypted cyphertext: " + new String(decr.toByteArray()));
+		double decryptStartTime = System.nanoTime();
+		BigInteger decr = encr.modPow(exp2, n);
+		double decryptEndTime = System.nanoTime();
+		System.out.println("[LOG - DEBUG] -- \t\tDecrypted cyphertext: " + new String(decr.toByteArray()) + " || Duration: " + (new DecimalFormat("####0.00000").format((decryptEndTime - decryptStartTime)/100000.00)) + "ms");
 		System.out.println("[LOG - DEBUG] -- \t\tDecoding " + new String(decr.toByteArray()) + "  ===>  " + new String(Base64.decodeBase64(decr.toByteArray())));
 	}
 
@@ -53,7 +56,7 @@ public class RSAKeypair {
 		exchangeMessageExample("Oi, Tobar!", getE(), getD(), getN());
 
 		System.out.println("[LOG - DEBUG] -- \tENCRYPTING with the PRIVATE key and DECRYPTING with the PUBLIC key");
-		exchangeMessageExample("Olá, Nicholas!", getD(), getE(), getN());
+		exchangeMessageExample("Olá, Nick!", getD(), getE(), getN());
 		System.out.println("[LOG - DEBUG] -- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	}
 

@@ -42,7 +42,7 @@ public class GASettings extends JFrame {
 
 		final String[] defaultSettingsValues = {"1024",   "500",  "1",  "1",  "0.015",   "0.5",    "50",    "20"};
 		String[] minimumParameterValues      = {"128",     "50",  "1",  "1",  "0.000",  "0.05",    "50",    "10"};
-		String[] maximumParameterValues      = {"3072",  "1000",  "2",  "2",   "0.03",   "1.0",  "1000",  "2000"};
+		String[] maximumParameterValues      = {"4096",  "1000",  "2",  "2",   "0.03",   "1.0",  "1000",  "2000"};
 
 		final int numLabels = settingsLabels.length;
 

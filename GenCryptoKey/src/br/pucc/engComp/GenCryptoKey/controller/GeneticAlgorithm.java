@@ -146,7 +146,7 @@ public class GeneticAlgorithm {
 		//		}
 
 		// Loop through all individuals' applying the crossover to generate new individuals
-		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O((n^2)/2)
+		// Repeated crossovers are disregarded, thus n^2/2 operations are made in O((n^2))
 		for(int i = 0; i < numOfIndividualsToCrossover; ++i) {
 			for(int j = i+1; j < numOfIndividualsToCrossover; ++j) {
 				// There is no need to choose a random crossover point, since

@@ -47,8 +47,8 @@ public class Home extends JFrame{
 		 * Uncomment this to bypass window mode
 		 */
 		//		GenCryptoKey.run(); // Execute regular routine
-		//		GenCryptoKey.runEvaluationTests(20); // Execute evaluation routine [number of individuals to be generated and evaluated]
-		//		if(1 != 0) return;
+		//GenCryptoKey.runEvaluationTests(100); // Execute evaluation routine [number of individuals to be generated and evaluated]
+		//if(1 != 0) return;
 		/**
 		 * @@@@@@@@@@@ DEBUG AND EVALUATION ONLY @@@@@@@@@@@@@@
 		 */
