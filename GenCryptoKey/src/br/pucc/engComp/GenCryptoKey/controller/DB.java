@@ -110,11 +110,11 @@ public class DB {
 
         Pair<String, String> generatedKeysTable = new Pair<String, String>();
         generatedKeysTable.setFirst("GENERATEDKEYS");
-        generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(3072), PUBLICEXPONENT varchar(5), PRIVATEEXPONENT varchar(3072), MODULUS varchar(3072), KEYPAIRDESCRIPTION varchar(50), GENERATIONTIMESTAMP timestamp, primary key(ID))");
+        generatedKeysTable.setSecond("create table GENERATEDKEYS (ID int not null generated always as identity(start with 1, increment by 1), GENERATEDKEY varchar(4096), PUBLICEXPONENT varchar(5), PRIVATEEXPONENT varchar(4096), MODULUS varchar(4096), KEYPAIRDESCRIPTION varchar(50), GENERATIONTIMESTAMP timestamp, primary key(ID))");
 
         Pair<String, String> pastGenerationsTable = new Pair<String, String>();
         pastGenerationsTable.setFirst("PASTGENERATIONS");
-        pastGenerationsTable.setSecond("create table PASTGENERATIONS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, PRIMEONE varchar(3072), PRIMETWO varchar(3072), PUBLICEXPONENT int, primary key(ID))");
+        pastGenerationsTable.setSecond("create table PASTGENERATIONS (ID int not null generated always as identity(start with 1, increment by 1), INDIVIDUALSIZE int, PRIMEONE varchar(4096), PRIMETWO varchar(4096), PUBLICEXPONENT int, primary key(ID))");
 
         tables.add(userInfoTable);
         tables.add(settingsTable);

@@ -36,10 +36,10 @@ public class About extends JFrame{
 						+ "This application contains software developed by other open source projects, <BR>"
 						+ "including Oracle (http://www.oracle.com/) and Apache Software Foundation (http://www.apache.org/) <BR><BR><BR><BR>"
 						+ "<hr>" // line divider
-						+ "Copyright (c) 2014 Nicholas Fanelli"
+						+ "Copyright (c) Nicholas Fanelli 2014. "
 						+ "Copy and redistribution of this application is permitted under<BR>"
 						+ "the GNU Public License version 2 (GPLv2) provided due credits are given." +
-						"</html>";
+				"</html>";
 
 		//JOptionPane.showMessageDialog(homeFrame, aboutMessage, "About", JOptionPane.INFORMATION_MESSAGE);
 		JButton okButton = new JButton("Ok");

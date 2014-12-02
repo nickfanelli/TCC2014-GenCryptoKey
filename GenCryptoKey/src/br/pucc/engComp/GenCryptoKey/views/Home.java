@@ -227,9 +227,9 @@ public class Home extends JFrame{
 					@Override
 					protected Void doInBackground() throws Exception {
 						// Background processing is done here
-						System.out.println("[LOG - DEBUG] -- Entrei na execução do initParameters() em background");
+						System.out.println("[LOG - DEBUG] -- initParameters() started in background");
 						GenCryptoKey.initParameters();
-						System.out.println("[LOG - DEBUG] -- Terminei o init.\n");
+						System.out.println("[LOG - DEBUG] -- initParameters() finished.\n");
 						return null;
 					}
 
@@ -247,7 +247,7 @@ public class Home extends JFrame{
 					@Override
 					protected Void doInBackground() throws Exception {
 						// Background processing is done here
-						System.out.println("[LOG - DEBUG] -- Entrei na execução do run() em background");
+						System.out.println("[LOG - DEBUG] -- run() started in background");
 						GenCryptoKey.run();
 						return null;
 					}
@@ -263,17 +263,16 @@ public class Home extends JFrame{
 			}
 		});
 
-		runMenu.add(runGenerateKeyGraphically);
-		runGenerateKeyGraphically.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/eye24px.png")));
-		runGenerateKeyGraphically.setEnabled(false);
-		runGenerateKeyGraphically.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				GenCryptoKey.runGraphically();
-				// TODO graphic mode
-			}
-		});
-		runGenerateKeyGraphically.setEnabled(false);
+		//		runMenu.add(runGenerateKeyGraphically);
+		//		runGenerateKeyGraphically.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/eye24px.png")));
+		//		runGenerateKeyGraphically.setEnabled(false);
+		//		runGenerateKeyGraphically.addActionListener(new ActionListener(){
+		//			@Override
+		//			public void actionPerformed(ActionEvent evt) {
+		//				GenCryptoKey.runGraphically();
+		//				// TODO graphic mode
+		//			}
+		//		});
 
 		// Adding 'View' menu to the menu bar
 		menuBar.add(viewMenu);
@@ -298,9 +297,9 @@ public class Home extends JFrame{
 			}
 		});
 
-		viewMenu.add(viewExecutionLog);
-		viewExecutionLog.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notes24px.png")));
-		viewExecutionLog.setEnabled(false);
+		//		viewMenu.add(viewExecutionLog);
+		//		viewExecutionLog.setIcon(new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/notes24px.png")));
+		//		viewExecutionLog.setEnabled(false);
 
 
 		// Adding 'Help' menu to the menu bar
@@ -332,12 +331,9 @@ public class Home extends JFrame{
 		ImageIcon questionIcon = new ImageIcon(Home.class.getResource("/br/pucc/engComp/GenCryptoKey/resources/help24px.png"));
 		Object[] buttonOptions = {"Yes", "No"};
 
-		System.out.println("\n\n[LOG - DEBUG] -- Abri o dialog\n\n");
-
 		userChoice = JOptionPane.showOptionDialog(null, questionToUser, "Population input choice", JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE, questionIcon, buttonOptions, buttonOptions[0]);
 
-		System.out.println("\n\n[LOG - DEBUG] -- Fechei o dialog\n\n");
 		if(userChoice == 0) return Boolean.TRUE;
 		else return Boolean.FALSE;
 	}
