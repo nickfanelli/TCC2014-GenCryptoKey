@@ -19,7 +19,7 @@ public class DB {
         if (conn == null) {
             try {
                 Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
-                conn = DriverManager.getConnection("jdbc:derby:biocryptokeydb;create=true;user=nicholas;pass=engCompTCC2014");
+                conn = DriverManager.getConnection("jdbc:derby:biocryptokeydb;create=true;dataEncryption=true;user=nicholas;pass=engCompTCC2014");
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

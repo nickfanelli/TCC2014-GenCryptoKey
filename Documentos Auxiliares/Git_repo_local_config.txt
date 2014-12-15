@@ -1,0 +1,9 @@
+
+	$ git config --global user.name "Nicholas Fanelli Hugueney"
+	$ git config --global user.email nicholashugueney@gmail.com
+	$ git config --global core.editor nano
+	$ mkdir /home/nicholas/TCC
+	$ cd /home/nicholas/TCC
+	$ git clone https://github.com/nickfanelli/TCC2014-GenCryptoKey.git
+	
+	

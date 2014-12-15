@@ -1,0 +1,27 @@
+	
+	/* Inicializa vetor população */
+
+	vetorPopulação = nova população;
+
+	/* Repete pelo número de gerações definidas pelo usuário */
+
+	i = 0;
+	Faça enquanto (i < número total de gerações) {
+
+		/* Operação crossover */
+	
+		j = 0;
+		k = j+1;
+	
+		Faça enquanto (j < (tamanho da população * taxa de indivíduos para crossover)) {
+	
+			Faça enquanto (k < tamanho da população) {
+		
+				/* Cruza genes dos indivíduos pais para gerar novos indivíduos */
+				novoIndivíduo_1 = vetorPopulação[j].gene1 + vetorPopulação[k].gene2
+				novoIndivíduo_2 = vetorPopulação[k].gene1 + vetorPopulação[j].gene2
+			} 
+		}
+	}
+	
+	

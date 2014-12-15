@@ -1,3 +1,3 @@
 40 21 * * * /home/nicholas/TCC/rsync_backup_script.sh daily go
-00 22 * 7 * /home/nicholas/TCC/rsync_backup_script.sh weekly go
+00 22 * * 7 /home/nicholas/TCC/rsync_backup_script.sh weekly go
 15 22 30 * * /home/nicholas/TCC/rsync_backup_script.sh monthly go

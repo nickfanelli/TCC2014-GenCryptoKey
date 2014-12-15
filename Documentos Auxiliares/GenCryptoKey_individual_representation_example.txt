@@ -1,0 +1,15 @@
+
+	Modelo de um indivíduo: [p, q, e] (os genes são representados em valores binários)
+	
+	ind1: [p = 3, q = 5,  e = 65537] -> [ 11,  101, 10000000000000001]
+	ind2: [p = 7, q = 11, e = 65537] -> [111, 1011, 10000000000000001]
+
+	Crossover entre ind1 e ind2:
+
+		ind3: [ 11,  1011, 10000000000000001]
+		ind4: [111,   101, 10000000000000001]
+	
+	Possível mutação em ind3:
+
+		ind3: [11, 1101, 10000000000000001]
+		

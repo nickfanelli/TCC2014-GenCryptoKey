@@ -1,0 +1,7 @@
+
+	Comando			Função
+	crontab -e		Edita o crontab atual do usuário
+	crontab -l		Exibe o atual conteúdo do crontab do usuário
+	crontab -r		Remove o crontab do usuário
+	
+	

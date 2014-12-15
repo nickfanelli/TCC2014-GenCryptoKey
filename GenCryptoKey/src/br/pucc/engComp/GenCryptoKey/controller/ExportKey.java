@@ -12,7 +12,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import br.pucc.engComp.GenCryptoKey.views.Home;
 
 public class ExportKey {
@@ -34,14 +33,14 @@ public class ExportKey {
 
 			/** File chooser to set the directory for key exporting */
 			JFileChooser exportKeyDirectoryChooser = new JFileChooser();
-			exportKeyDirectoryChooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
-			String defaultFilename = "Exported_CryptoKey_" + System.currentTimeMillis() + ".txt";
-			exportKeyDirectoryChooser.setSelectedFile(new File(defaultFilename));
 			exportKeyDirectoryChooser.setDialogTitle("Export");
-			exportKeyDirectoryChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			exportKeyDirectoryChooser.setAcceptAllFileFilterUsed(false);
+			//exportKeyDirectoryChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			exportKeyDirectoryChooser.setAcceptAllFileFilterUsed(true);
+			exportKeyDirectoryChooser.setCurrentDirectory(new java.io.File(System.getProperty("user.home")));
+			String defaultFilename = "Exported_CryptoKey_"  + System.currentTimeMillis() + ".txt";
+			exportKeyDirectoryChooser.setSelectedFile(new File(defaultFilename));
 
-			if (exportKeyDirectoryChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			if (exportKeyDirectoryChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 
 				PrintWriter exportedKeyFile = null;
 				try {
